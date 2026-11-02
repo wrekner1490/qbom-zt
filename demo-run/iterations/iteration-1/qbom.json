@@ -1,0 +1,561 @@
+{
+  "org": "Acme Corp",
+  "generated_at": "2026-09-27T05:53:25.034606+00:00",
+  "catalog_version": "1",
+  "catalog_hash": "5a06fc0a9f41c8cf2d41dfc7f66c2aa946da52b46806ca99b96e303a7c07a7b9",
+  "components": {
+    "payments-svc": {
+      "name": "payments-svc",
+      "exposure": "internet_facing",
+      "data_sensitivity": "critical",
+      "data_lifetime_years": 15,
+      "owner": "payments-team"
+    },
+    "legacy-batch": {
+      "name": "legacy-batch",
+      "exposure": "internal",
+      "data_sensitivity": "medium",
+      "data_lifetime_years": 2,
+      "owner": "platform-team"
+    },
+    "vault-svc": {
+      "name": "vault-svc",
+      "exposure": "internal",
+      "data_sensitivity": "high",
+      "data_lifetime_years": 7,
+      "owner": "security-team"
+    }
+  },
+  "findings": [
+    {
+      "catalog_id": "MD5",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/web-service/crypto-utils.js",
+      "line": 4,
+      "snippet": "return crypto.createHash(\"md5\").update(data).digest(\"hex\");",
+      "source": "regex:node-createhash",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/web-service/crypto-utils.js",
+      "line": 8,
+      "snippet": "return crypto.createHash(\"sha256\").update(data).digest(\"hex\");",
+      "source": "regex:node-createhash",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "3DES",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/web-service/crypto-utils.js",
+      "line": 12,
+      "snippet": "const cipher = crypto.createCipheriv(\"des-ede3-cbc\", key, iv);",
+      "source": "regex:node-createcipher",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "DH-SUB2048",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 2,
+      "snippet": "KexAlgorithms diffie-hellman-group1-sha1,curve25519-sha256,sntrup761x25519-sha512@openssh.com",
+      "source": "regex:sshd-kex",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "X25519",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 2,
+      "snippet": "KexAlgorithms diffie-hellman-group1-sha1,curve25519-sha256,sntrup761x25519-sha512@openssh.com",
+      "source": "regex:sshd-kex",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "HYBRID-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 2,
+      "snippet": "KexAlgorithms diffie-hellman-group1-sha1,curve25519-sha256,sntrup761x25519-sha512@openssh.com",
+      "source": "regex:sshd-kex",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-256",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 3,
+      "snippet": "Ciphers aes256-gcm@openssh.com,3des-cbc,chacha20-poly1305@openssh.com",
+      "source": "regex:sshd-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "CHACHA20",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 3,
+      "snippet": "Ciphers aes256-gcm@openssh.com,3des-cbc,chacha20-poly1305@openssh.com",
+      "source": "regex:sshd-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA1",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 4,
+      "snippet": "MACs hmac-sha1,hmac-sha2-256",
+      "source": "regex:sshd-macs",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-UNK",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 5,
+      "snippet": "HostKeyAlgorithms ssh-rsa,ssh-ed25519",
+      "source": "regex:sshd-hostkeys",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ED25519",
+      "purpose": "SIGNATURE",
+      "file_path": "samples/vulnerable-app/config/sshd_config",
+      "line": 5,
+      "snippet": "HostKeyAlgorithms ssh-rsa,ssh-ed25519",
+      "source": "regex:sshd-hostkeys",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "TLS1.0",
+      "purpose": "PROTOCOL",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 3,
+      "snippet": "ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;",
+      "source": "regex:nginx-ssl-protocols",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "TLS1.1",
+      "purpose": "PROTOCOL",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 3,
+      "snippet": "ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;",
+      "source": "regex:nginx-ssl-protocols",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "TLS1.2",
+      "purpose": "PROTOCOL",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 3,
+      "snippet": "ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;",
+      "source": "regex:nginx-ssl-protocols",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "TLS1.3",
+      "purpose": "PROTOCOL",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 3,
+      "snippet": "ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;",
+      "source": "regex:nginx-ssl-protocols",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "EC-P256",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-UNK",
+      "purpose": "SIGNATURE",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-128",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-UNK",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "3DES",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA1",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-UNK",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RC4",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "MD5",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ciphers \"ECDHE-RSA-AES128-GCM-SHA256:DES-CBC3-SHA:RC4-MD5\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-SUB2048",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/config/openssl.cnf",
+      "line": 2,
+      "snippet": "default_bits = 1024",
+      "source": "regex:openssl-cnf-default-bits",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-UNK",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/openssl.cnf",
+      "line": 4,
+      "snippet": "CipherString = DEFAULT:!aNULL:!eNULL:RC4-SHA:AES256-SHA256",
+      "source": "regex:openssl-cnf-cipherstring",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RC4",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/config/openssl.cnf",
+      "line": 4,
+      "snippet": "CipherString = DEFAULT:!aNULL:!eNULL:RC4-SHA:AES256-SHA256",
+      "source": "regex:openssl-cnf-cipherstring",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA1",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/config/openssl.cnf",
+      "line": 4,
+      "snippet": "CipherString = DEFAULT:!aNULL:!eNULL:RC4-SHA:AES256-SHA256",
+      "source": "regex:openssl-cnf-cipherstring",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-UNK",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/config/openssl.cnf",
+      "line": 4,
+      "snippet": "CipherString = DEFAULT:!aNULL:!eNULL:RC4-SHA:AES256-SHA256",
+      "source": "regex:openssl-cnf-cipherstring",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-256",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/config/openssl.cnf",
+      "line": 4,
+      "snippet": "CipherString = DEFAULT:!aNULL:!eNULL:RC4-SHA:AES256-SHA256",
+      "source": "regex:openssl-cnf-cipherstring",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "TLS1.2",
+      "purpose": "PROTOCOL",
+      "file_path": "samples/vulnerable-app/config/openssl.cnf",
+      "line": 5,
+      "snippet": "Protocol = TLSv1.2",
+      "source": "regex:openssl-cnf-protocol",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "EC-P256",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/certs/modern_service.crt",
+      "line": 1,
+      "snippet": "x509 public key",
+      "source": "x509-cert:public_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "SIGNATURE",
+      "file_path": "samples/vulnerable-app/certs/modern_service.crt",
+      "line": 1,
+      "snippet": "x509 signature hash: sha256",
+      "source": "x509-cert:signature_hash",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-SUB2048",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/certs/legacy_partner.crt",
+      "line": 1,
+      "snippet": "x509 public key",
+      "source": "x509-cert:public_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA1",
+      "purpose": "SIGNATURE",
+      "file_path": "samples/vulnerable-app/certs/legacy_partner.crt",
+      "line": 1,
+      "snippet": "x509 signature hash: sha1",
+      "source": "x509-cert:signature_hash",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-SUB2048",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/certs/legacy_partner.key",
+      "line": 1,
+      "snippet": "PEM private key",
+      "source": "pem:private_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "EC-P256",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/certs/modern_service.key",
+      "line": 1,
+      "snippet": "PEM private key",
+      "source": "pem:private_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-UNK",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/app/api/AuthService.java",
+      "line": 6,
+      "snippet": "KeyPairGenerator kpg = KeyPairGenerator.getInstance(\"RSA\");",
+      "source": "regex:java-rsa-generic",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-2048",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/app/api/AuthService.java",
+      "line": 7,
+      "snippet": "kpg.initialize(2048);",
+      "source": "regex:java-keygen-initialize",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA1",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/app/api/AuthService.java",
+      "line": 12,
+      "snippet": "MessageDigest md = MessageDigest.getInstance(\"SHA1\");",
+      "source": "regex:java-messagedigest",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "DES",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/app/api/AuthService.java",
+      "line": 17,
+      "snippet": "return Cipher.getInstance(\"DES/ECB/PKCS5Padding\");",
+      "source": "regex:java-cipher",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "MODE-ECB",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/app/api/AuthService.java",
+      "line": 17,
+      "snippet": "return Cipher.getInstance(\"DES/ECB/PKCS5Padding\");",
+      "source": "regex:java-cipher",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "X25519",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "samples/vulnerable-app/app/crypto/vault.py",
+      "line": 6,
+      "snippet": "return x25519.X25519PrivateKey.generate()",
+      "source": "python-ast:x25519.generate",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ED25519",
+      "purpose": "SIGNATURE",
+      "file_path": "samples/vulnerable-app/app/crypto/vault.py",
+      "line": 9,
+      "snippet": "return ed25519.Ed25519PrivateKey.generate()",
+      "source": "python-ast:ed25519.generate",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-UNK",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/app/crypto/vault.py",
+      "line": 12,
+      "snippet": "cipher = Cipher(algorithms.AES(key), modes.GCM(nonce))",
+      "source": "python-ast:algorithms.AES",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/app/crypto/vault.py",
+      "line": 17,
+      "snippet": "return hashlib.sha256(data).digest()",
+      "source": "python-ast:hashlib",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-SUB2048",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/app/payments/service.py",
+      "line": 8,
+      "snippet": "return rsa.generate_private_key(public_exponent=65537, key_size=1024)",
+      "source": "python-ast:rsa.generate_private_key",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "EC-P256",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "samples/vulnerable-app/app/payments/service.py",
+      "line": 11,
+      "snippet": "return ec.generate_private_key(ec.SECP256R1())",
+      "source": "python-ast:ec.generate_private_key",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-UNK",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/app/payments/service.py",
+      "line": 17,
+      "snippet": "cipher = Cipher(algorithms.AES(key), modes.ECB())",
+      "source": "python-ast:algorithms.AES",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "MODE-ECB",
+      "purpose": "SYMMETRIC",
+      "file_path": "samples/vulnerable-app/app/payments/service.py",
+      "line": 17,
+      "snippet": "cipher = Cipher(algorithms.AES(key), modes.ECB())",
+      "source": "python-ast:modes.ECB",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "MD5",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/app/payments/service.py",
+      "line": 14,
+      "snippet": "return hashlib.md5(payload).hexdigest()",
+      "source": "python-ast:hashlib",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA1",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/app/legacy/hash.py",
+      "line": 4,
+      "snippet": "return hashlib.sha1(data).hexdigest()",
+      "source": "python-ast:hashlib",
+      "component": "legacy-batch",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "MD5",
+      "purpose": "HASH",
+      "file_path": "samples/vulnerable-app/app/legacy/hash.py",
+      "line": 7,
+      "snippet": "return hashlib.md5(pw.encode()).hexdigest()",
+      "source": "python-ast:hashlib",
+      "component": "legacy-batch",
+      "confidence": "high"
+    }
+  ]
+}

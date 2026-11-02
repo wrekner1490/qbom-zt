@@ -1,0 +1,341 @@
+{
+  "org": "Acme Corp",
+  "generated_at": "2026-09-27T05:53:26.390258+00:00",
+  "catalog_version": "1",
+  "catalog_hash": "5a06fc0a9f41c8cf2d41dfc7f66c2aa946da52b46806ca99b96e303a7c07a7b9",
+  "components": {
+    "payments-svc": {
+      "name": "payments-svc",
+      "exposure": "internet_facing",
+      "data_sensitivity": "critical",
+      "data_lifetime_years": 15,
+      "owner": "payments-team"
+    },
+    "legacy-batch": {
+      "name": "legacy-batch",
+      "exposure": "internal",
+      "data_sensitivity": "medium",
+      "data_lifetime_years": 2,
+      "owner": "platform-team"
+    },
+    "vault-svc": {
+      "name": "vault-svc",
+      "exposure": "internal",
+      "data_sensitivity": "high",
+      "data_lifetime_years": 7,
+      "owner": "security-team"
+    }
+  },
+  "findings": [
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "demo-run/workdir/web-service/crypto-utils.js",
+      "line": 4,
+      "snippet": "return crypto.createHash(\"sha256\").update(data).digest(\"hex\");",
+      "source": "regex:node-createhash",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "demo-run/workdir/web-service/crypto-utils.js",
+      "line": 8,
+      "snippet": "return crypto.createHash(\"sha256\").update(data).digest(\"hex\");",
+      "source": "regex:node-createhash",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-256",
+      "purpose": "SYMMETRIC",
+      "file_path": "demo-run/workdir/web-service/crypto-utils.js",
+      "line": 12,
+      "snippet": "const cipher = crypto.createCipheriv(\"aes-256-gcm\", key, iv);",
+      "source": "regex:node-createcipher",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "HYBRID-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "demo-run/workdir/config/sshd_config",
+      "line": 2,
+      "snippet": "KexAlgorithms sntrup761x25519-sha512@openssh.com",
+      "source": "regex:sshd-kex",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-256",
+      "purpose": "SYMMETRIC",
+      "file_path": "demo-run/workdir/config/sshd_config",
+      "line": 3,
+      "snippet": "Ciphers aes256-gcm@openssh.com,chacha20-poly1305@openssh.com",
+      "source": "regex:sshd-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "CHACHA20",
+      "purpose": "SYMMETRIC",
+      "file_path": "demo-run/workdir/config/sshd_config",
+      "line": 3,
+      "snippet": "Ciphers aes256-gcm@openssh.com,chacha20-poly1305@openssh.com",
+      "source": "regex:sshd-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ED25519",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/config/sshd_config",
+      "line": 5,
+      "snippet": "HostKeyAlgorithms ssh-ed25519",
+      "source": "regex:sshd-hostkeys",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "TLS1.3-HYBRID",
+      "purpose": "PROTOCOL",
+      "file_path": "demo-run/workdir/config/nginx.conf",
+      "line": 3,
+      "snippet": "ssl_protocols TLSv1.3;",
+      "source": "regex:nginx-ssl-protocols",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "X25519",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "demo-run/workdir/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ecdh_curve X25519:X25519MLKEM768;",
+      "source": "regex:nginx-ssl-ecdh-curve",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "HYBRID-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "demo-run/workdir/config/nginx.conf",
+      "line": 4,
+      "snippet": "ssl_ecdh_curve X25519:X25519MLKEM768;",
+      "source": "regex:nginx-ssl-ecdh-curve",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "CHACHA20",
+      "purpose": "SYMMETRIC",
+      "file_path": "demo-run/workdir/config/nginx.conf",
+      "line": 5,
+      "snippet": "ssl_ciphers \"TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256\";",
+      "source": "regex:nginx-ssl-ciphers",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "RSA-3072",
+      "purpose": "UNKNOWN_ASYM",
+      "file_path": "demo-run/workdir/config/openssl.cnf",
+      "line": 2,
+      "snippet": "default_bits = 3072",
+      "source": "regex:openssl-cnf-default-bits",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "TLS1.3-HYBRID",
+      "purpose": "PROTOCOL",
+      "file_path": "demo-run/workdir/config/openssl.cnf",
+      "line": 5,
+      "snippet": "Protocol = TLSv1.3",
+      "source": "regex:openssl-cnf-protocol",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "X25519",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "demo-run/workdir/config/openssl.cnf",
+      "line": 6,
+      "snippet": "Groups = X25519:X25519MLKEM768",
+      "source": "regex:openssl-cnf-groups",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "HYBRID-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "demo-run/workdir/config/openssl.cnf",
+      "line": 6,
+      "snippet": "Groups = X25519:X25519MLKEM768",
+      "source": "regex:openssl-cnf-groups",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ML-DSA",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/certs/modern_service.crt",
+      "line": 1,
+      "snippet": "x509 public key",
+      "source": "x509-cert:public_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ML-DSA",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/certs/legacy_partner.crt",
+      "line": 1,
+      "snippet": "x509 public key",
+      "source": "x509-cert:public_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ML-DSA",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/certs/legacy_partner.key",
+      "line": 1,
+      "snippet": "PEM private key",
+      "source": "pem:private_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ML-DSA",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/certs/modern_service.key",
+      "line": 1,
+      "snippet": "PEM private key",
+      "source": "pem:private_key",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ML-DSA",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/app/api/AuthService.java",
+      "line": 7,
+      "snippet": "KeyPairGenerator kpg = KeyPairGenerator.getInstance(\"ML-DSA\");",
+      "source": "regex:java-pqc-keygen",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "demo-run/workdir/app/api/AuthService.java",
+      "line": 12,
+      "snippet": "MessageDigest md = MessageDigest.getInstance(\"SHA-256\");",
+      "source": "regex:java-messagedigest",
+      "component": null,
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "HYBRID-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "demo-run/workdir/app/crypto/vault.py",
+      "line": 9,
+      "snippet": "return oqs.KeyEncapsulation(\"X25519MLKEM768\")",
+      "source": "python-ast:oqs.KeyEncapsulation",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ML-DSA",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/app/crypto/vault.py",
+      "line": 13,
+      "snippet": "return oqs.Signature(\"ML-DSA-65\")",
+      "source": "python-ast:oqs.Signature",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-UNK",
+      "purpose": "SYMMETRIC",
+      "file_path": "demo-run/workdir/app/crypto/vault.py",
+      "line": 16,
+      "snippet": "cipher = Cipher(algorithms.AES(key), modes.GCM(nonce))",
+      "source": "python-ast:algorithms.AES",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "demo-run/workdir/app/crypto/vault.py",
+      "line": 21,
+      "snippet": "return hashlib.sha256(data).digest()",
+      "source": "python-ast:hashlib",
+      "component": "vault-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "ML-DSA",
+      "purpose": "SIGNATURE",
+      "file_path": "demo-run/workdir/app/payments/service.py",
+      "line": 10,
+      "snippet": "return oqs.Signature(\"ML-DSA-65\")",
+      "source": "python-ast:oqs.Signature",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "HYBRID-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "file_path": "demo-run/workdir/app/payments/service.py",
+      "line": 14,
+      "snippet": "return oqs.KeyEncapsulation(\"X25519MLKEM768\")",
+      "source": "python-ast:oqs.KeyEncapsulation",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "AES-UNK",
+      "purpose": "SYMMETRIC",
+      "file_path": "demo-run/workdir/app/payments/service.py",
+      "line": 21,
+      "snippet": "cipher = Cipher(algorithms.AES(key), modes.GCM(nonce))",
+      "source": "python-ast:algorithms.AES",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "demo-run/workdir/app/payments/service.py",
+      "line": 17,
+      "snippet": "return hashlib.sha256(payload).hexdigest()",
+      "source": "python-ast:hashlib",
+      "component": "payments-svc",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "demo-run/workdir/app/legacy/hash.py",
+      "line": 4,
+      "snippet": "return hashlib.sha256(data).hexdigest()",
+      "source": "python-ast:hashlib",
+      "component": "legacy-batch",
+      "confidence": "high"
+    },
+    {
+      "catalog_id": "SHA-256",
+      "purpose": "HASH",
+      "file_path": "demo-run/workdir/app/legacy/hash.py",
+      "line": 7,
+      "snippet": "return hashlib.sha256(pw.encode()).hexdigest()",
+      "source": "python-ast:hashlib",
+      "component": "legacy-batch",
+      "confidence": "high"
+    }
+  ]
+}

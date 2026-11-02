@@ -1,0 +1,5 @@
+[req]
+default_bits = 1024
+[system_default_sect]
+CipherString = DEFAULT:!aNULL:!eNULL:RC4-SHA:AES256-SHA256
+Protocol = TLSv1.2

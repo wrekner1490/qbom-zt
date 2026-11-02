@@ -1,0 +1,2618 @@
+{
+  "engagement_id": "866ae41d-1f56-49fd-ac2d-169349c8e460",
+  "org": "Acme Corp",
+  "source_path": "samples/vulnerable-app",
+  "out_dir": "demo-run",
+  "manifest_path": "samples/manifest.json",
+  "target_pct": 80.0,
+  "max_iterations": 8,
+  "max_actions_per_round": 3,
+  "created_at": "2026-09-27T05:53:24.995218+00:00",
+  "status": "TARGET_MET",
+  "consent": {
+    "org": "Acme Corp",
+    "accepted_by": "Priya Sharma, CISO",
+    "statement": "Priya Sharma, CISO, on behalf of Acme Corp, authorises a Quantum Bill of Materials assessment of samples/vulnerable-app against a target post-quantum readiness of 80.0%, understanding that raw findings never leave the organisation's own infrastructure (see the zero-trust attestation layer).",
+    "accepted_at": "2026-09-27T05:53:24.995708+00:00"
+  },
+  "iterations": [
+    {
+      "index": 1,
+      "timestamp": "2026-09-27T05:53:25.421199+00:00",
+      "scanned_root": "original",
+      "findings_total": 53,
+      "readiness": {
+        "total_findings": 53,
+        "by_threat_class": {
+          "CLASSICAL_BROKEN": 19,
+          "PQ_SAFE": 6,
+          "SHOR": 24,
+          "HYBRID": 1,
+          "GROVER": 3
+        },
+        "pq_ready_pct": 13.2,
+        "shor_vulnerable_pct": 45.3,
+        "grover_weakened_pct": 5.7,
+        "classically_broken_pct": 35.8,
+        "legacy_pq_pct": 0.0,
+        "distinct_algorithms": 23,
+        "_raw_counts": {
+          "MD5": 4,
+          "SHA-256": 3,
+          "3DES": 2,
+          "DH-SUB2048": 1,
+          "X25519": 2,
+          "HYBRID-KEM": 1,
+          "AES-256": 2,
+          "CHACHA20": 1,
+          "SHA1": 6,
+          "RSA-UNK": 7,
+          "ED25519": 2,
+          "TLS1.0": 1,
+          "TLS1.1": 1,
+          "TLS1.2": 2,
+          "TLS1.3": 1,
+          "EC-P256": 4,
+          "AES-128": 1,
+          "RC4": 2,
+          "RSA-SUB2048": 4,
+          "RSA-2048": 1,
+          "DES": 1,
+          "MODE-ECB": 2,
+          "AES-UNK": 2
+        }
+      },
+      "migration_plan": [
+        {
+          "catalog_id": "EC-P256",
+          "label": "ECC P-256 (ECDSA/ECDH)",
+          "threat": "SHOR",
+          "count": 4,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 15.0,
+          "score": 1216.8,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 15y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/nginx.conf:4",
+            "samples/vulnerable-app/certs/modern_service.crt:1",
+            "samples/vulnerable-app/certs/modern_service.key:1",
+            "samples/vulnerable-app/app/payments/service.py:11"
+          ]
+        },
+        {
+          "catalog_id": "RSA-SUB2048",
+          "label": "RSA (<2048-bit)",
+          "threat": "SHOR",
+          "count": 4,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 15.0,
+          "score": 1216.8,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware; and stop using <2048 now",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 15y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/openssl.cnf:2",
+            "samples/vulnerable-app/certs/legacy_partner.crt:1",
+            "samples/vulnerable-app/certs/legacy_partner.key:1",
+            "samples/vulnerable-app/app/payments/service.py:8"
+          ]
+        },
+        {
+          "catalog_id": "MD5",
+          "label": "MD5",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 4,
+          "components": [
+            "legacy-batch",
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 327.6,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/web-service/crypto-utils.js:4",
+            "samples/vulnerable-app/config/nginx.conf:4",
+            "samples/vulnerable-app/app/payments/service.py:14",
+            "samples/vulnerable-app/app/legacy/hash.py:7"
+          ]
+        },
+        {
+          "catalog_id": "MODE-ECB",
+          "label": "ECB mode (misuse)",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 2,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 321.3,
+          "replacement": "AES-256-GCM (AEAD)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/app/api/AuthService.java:17",
+            "samples/vulnerable-app/app/payments/service.py:17"
+          ]
+        },
+        {
+          "catalog_id": "ED25519",
+          "label": "Ed25519",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 250.9,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:5",
+            "samples/vulnerable-app/app/crypto/vault.py:9"
+          ]
+        },
+        {
+          "catalog_id": "X25519",
+          "label": "X25519",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 250.9,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:2",
+            "samples/vulnerable-app/app/crypto/vault.py:6"
+          ]
+        },
+        {
+          "catalog_id": "AES-UNK",
+          "label": "AES (key size unknown)",
+          "threat": "GROVER",
+          "count": 2,
+          "components": [
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 137.7,
+          "replacement": "Verify key size; use AES-256",
+          "rationale": "Grover-weakened: effective security roughly halves under a large quantum computer; raise key/output size, no protocol redesign needed.",
+          "locations": [
+            "samples/vulnerable-app/app/crypto/vault.py:12",
+            "samples/vulnerable-app/app/payments/service.py:17"
+          ]
+        },
+        {
+          "catalog_id": "RSA-UNK",
+          "label": "RSA (size unknown)",
+          "threat": "SHOR",
+          "count": 7,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 88.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:5",
+            "samples/vulnerable-app/config/nginx.conf:4",
+            "samples/vulnerable-app/config/nginx.conf:4",
+            "samples/vulnerable-app/config/nginx.conf:4",
+            "samples/vulnerable-app/config/openssl.cnf:4",
+            "samples/vulnerable-app/config/openssl.cnf:4",
+            "samples/vulnerable-app/app/api/AuthService.java:6"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.2",
+          "label": "TLS 1.2",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 84.5,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/nginx.conf:3",
+            "samples/vulnerable-app/config/openssl.cnf:5"
+          ]
+        },
+        {
+          "catalog_id": "DH-SUB2048",
+          "label": "DH/FFDH (<2048-bit)",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:2"
+          ]
+        },
+        {
+          "catalog_id": "RSA-2048",
+          "label": "RSA-2048",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/app/api/AuthService.java:7"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.3",
+          "label": "TLS 1.3 (classical KEX)",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "Enable X25519MLKEM768 key share",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "samples/vulnerable-app/config/nginx.conf:3"
+          ]
+        },
+        {
+          "catalog_id": "SHA1",
+          "label": "SHA-1",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 6,
+          "components": [
+            "legacy-batch"
+          ],
+          "max_data_lifetime": 2,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 66.8,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:4",
+            "samples/vulnerable-app/config/nginx.conf:4",
+            "samples/vulnerable-app/config/openssl.cnf:4",
+            "samples/vulnerable-app/certs/legacy_partner.crt:1",
+            "samples/vulnerable-app/app/api/AuthService.java:12",
+            "samples/vulnerable-app/app/legacy/hash.py:4"
+          ]
+        },
+        {
+          "catalog_id": "3DES",
+          "label": "3DES",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 64.3,
+          "replacement": "AES-256-GCM",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/web-service/crypto-utils.js:12",
+            "samples/vulnerable-app/config/nginx.conf:4"
+          ]
+        },
+        {
+          "catalog_id": "RC4",
+          "label": "RC4",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 64.3,
+          "replacement": "AES-256-GCM or ChaCha20-Poly1305",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/config/nginx.conf:4",
+            "samples/vulnerable-app/config/openssl.cnf:4"
+          ]
+        },
+        {
+          "catalog_id": "DES",
+          "label": "DES",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 63.6,
+          "replacement": "AES-256-GCM",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/app/api/AuthService.java:17"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.0",
+          "label": "TLS 1.0",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 63.6,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/config/nginx.conf:3"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.1",
+          "label": "TLS 1.1",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 63.6,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "samples/vulnerable-app/config/nginx.conf:3"
+          ]
+        },
+        {
+          "catalog_id": "AES-128",
+          "label": "AES-128",
+          "threat": "GROVER",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 27.3,
+          "replacement": "AES-256 (CNSA 2.0 requires 256-bit keys)",
+          "rationale": "Grover-weakened: effective security roughly halves under a large quantum computer; raise key/output size, no protocol redesign needed.",
+          "locations": [
+            "samples/vulnerable-app/config/nginx.conf:4"
+          ]
+        },
+        {
+          "catalog_id": "HYBRID-KEM",
+          "label": "Hybrid KEM (classical+ML-KEM)",
+          "threat": "HYBRID",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 9.1,
+          "replacement": "Later: pure ML-KEM where policy allows",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:2"
+          ]
+        },
+        {
+          "catalog_id": "SHA-256",
+          "label": "SHA-256",
+          "threat": "PQ_SAFE",
+          "count": 3,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 6.2,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "samples/vulnerable-app/web-service/crypto-utils.js:8",
+            "samples/vulnerable-app/certs/modern_service.crt:1",
+            "samples/vulnerable-app/app/crypto/vault.py:17"
+          ]
+        },
+        {
+          "catalog_id": "AES-256",
+          "label": "AES-256",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:3",
+            "samples/vulnerable-app/config/openssl.cnf:4"
+          ]
+        },
+        {
+          "catalog_id": "CHACHA20",
+          "label": "ChaCha20(-Poly1305)",
+          "threat": "PQ_SAFE",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.6,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "samples/vulnerable-app/config/sshd_config:3"
+          ]
+        }
+      ],
+      "vex": {
+        "RSA-SUB2048": {
+          "status": "affected",
+          "label": "RSA (<2048-bit)",
+          "threat_class": "SHOR",
+          "count": 4,
+          "previous_count": 0,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware; and stop using <2048 now"
+        },
+        "DES": {
+          "status": "affected",
+          "label": "DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "AES-256-GCM"
+        },
+        "MD5": {
+          "status": "affected",
+          "label": "MD5",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 4,
+          "previous_count": 0,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "ED25519": {
+          "status": "affected",
+          "label": "Ed25519",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 0,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "MODE-ECB": {
+          "status": "affected",
+          "label": "ECB mode (misuse)",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 2,
+          "previous_count": 0,
+          "replacement": "AES-256-GCM (AEAD)"
+        },
+        "TLS1.1": {
+          "status": "affected",
+          "label": "TLS 1.1",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange"
+        },
+        "SHA1": {
+          "status": "affected",
+          "label": "SHA-1",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 6,
+          "previous_count": 0,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "TLS1.3": {
+          "status": "affected",
+          "label": "TLS 1.3 (classical KEX)",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "Enable X25519MLKEM768 key share"
+        },
+        "AES-UNK": {
+          "status": "affected",
+          "label": "AES (key size unknown)",
+          "threat_class": "GROVER",
+          "count": 2,
+          "previous_count": 0,
+          "replacement": "Verify key size; use AES-256"
+        },
+        "RSA-UNK": {
+          "status": "affected",
+          "label": "RSA (size unknown)",
+          "threat_class": "SHOR",
+          "count": 7,
+          "previous_count": 0,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "AES-128": {
+          "status": "affected",
+          "label": "AES-128",
+          "threat_class": "GROVER",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "AES-256 (CNSA 2.0 requires 256-bit keys)"
+        },
+        "RSA-2048": {
+          "status": "affected",
+          "label": "RSA-2048",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "X25519": {
+          "status": "affected",
+          "label": "X25519",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 0,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later"
+        },
+        "DH-SUB2048": {
+          "status": "affected",
+          "label": "DH/FFDH (<2048-bit)",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now"
+        },
+        "TLS1.2": {
+          "status": "affected",
+          "label": "TLS 1.2",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 0,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange"
+        },
+        "EC-P256": {
+          "status": "affected",
+          "label": "ECC P-256 (ECDSA/ECDH)",
+          "threat_class": "SHOR",
+          "count": 4,
+          "previous_count": 0,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "RC4": {
+          "status": "affected",
+          "label": "RC4",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 2,
+          "previous_count": 0,
+          "replacement": "AES-256-GCM or ChaCha20-Poly1305"
+        },
+        "3DES": {
+          "status": "affected",
+          "label": "3DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 2,
+          "previous_count": 0,
+          "replacement": "AES-256-GCM"
+        },
+        "TLS1.0": {
+          "status": "affected",
+          "label": "TLS 1.0",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange"
+        }
+      },
+      "remediation_applied": [
+        {
+          "action_id": "fix-nginx-tls",
+          "title": "Restrict nginx to TLS 1.3 with a hybrid PQ key-exchange group",
+          "files_changed": [
+            "config/nginx.conf"
+          ],
+          "summary": "Dropped TLS 1.0/1.1/1.2 entirely. Added a hybrid classical+ML-KEM group (X25519MLKEM768) alongside the classical fallback. Replaced the legacy dash-separated cipher-suite string (which implied static-RSA key transport and still listed RC4/3DES) with the standard TLS 1.3 suite names.",
+          "resolves": [
+            "TLS1.0",
+            "TLS1.1",
+            "TLS1.2",
+            "RC4",
+            "MD5",
+            "3DES",
+            "SHA1",
+            "RSA-UNK",
+            "EC-P256",
+            "AES-128"
+          ],
+          "applied_at": "2026-09-27T05:53:25.425668+00:00"
+        },
+        {
+          "action_id": "fix-openssl-cnf",
+          "title": "Raise default_bits, drop RC4, add a hybrid PQ group",
+          "files_changed": [
+            "config/openssl.cnf"
+          ],
+          "summary": "default_bits raised to 3072 (classical hygiene only -- RSA of any size stays Shor-vulnerable; this does not by itself move the readiness needle, and the report says so). CipherString no longer names RC4/legacy static-RSA suites. Added a Groups= directive enabling a hybrid ML-KEM group (OpenSSL 3.2+).",
+          "resolves": [
+            "RSA-SUB2048",
+            "RC4",
+            "SHA1",
+            "RSA-UNK",
+            "TLS1.2"
+          ],
+          "applied_at": "2026-09-27T05:53:25.425975+00:00"
+        },
+        {
+          "action_id": "reissue-legacy-partner-cert",
+          "title": "Re-issue legacy_partner.crt as ML-DSA-65 (FIPS 204)",
+          "files_changed": [
+            "certs/legacy_partner.crt",
+            "certs/legacy_partner.key"
+          ],
+          "summary": "A certificate's signature algorithm cannot be hand-edited -- it is re-issued, exactly as a PKI/CA team would. Signed with ML-DSA-65 (FIPS 204): this is a genuine post-quantum-safe certificate, not an interim step.",
+          "resolves": [
+            "RSA-SUB2048",
+            "SHA1"
+          ],
+          "applied_at": "2026-09-27T05:53:25.431505+00:00"
+        }
+      ],
+      "target_met": false,
+      "decision": "continue",
+      "attestation": {
+        "commitments": 23,
+        "leaves": 50,
+        "zero_proofs_published": 0,
+        "merkle_root": "c63c6e3b840eeda4d40a7c3ddbabffb4818cc84c22f5615c8c61bd3e4fc39b56"
+      },
+      "artifacts": {
+        "qbom": "iterations/iteration-1/qbom.json",
+        "cbom": "iterations/iteration-1/qbom-cbom.json",
+        "report_md": "iterations/iteration-1/qbom-report.md",
+        "report_pdf": "iterations/iteration-1/qbom-report.pdf",
+        "dashboard": "iterations/iteration-1/qbom-dashboard.html",
+        "vex": "iterations/iteration-1/vex.json",
+        "attestation": "iterations/iteration-1/attestation.public.json"
+      }
+    },
+    {
+      "index": 2,
+      "timestamp": "2026-09-27T05:53:25.812712+00:00",
+      "scanned_root": "work_root",
+      "findings_total": 40,
+      "readiness": {
+        "total_findings": 40,
+        "by_threat_class": {
+          "CLASSICAL_BROKEN": 10,
+          "PQ_SAFE": 8,
+          "SHOR": 15,
+          "HYBRID": 5,
+          "GROVER": 2
+        },
+        "pq_ready_pct": 32.5,
+        "shor_vulnerable_pct": 37.5,
+        "grover_weakened_pct": 5.0,
+        "classically_broken_pct": 25.0,
+        "legacy_pq_pct": 0.0,
+        "distinct_algorithms": 20,
+        "_raw_counts": {
+          "MD5": 3,
+          "SHA-256": 3,
+          "3DES": 1,
+          "DH-SUB2048": 1,
+          "X25519": 4,
+          "HYBRID-KEM": 3,
+          "AES-256": 1,
+          "CHACHA20": 2,
+          "SHA1": 3,
+          "RSA-UNK": 2,
+          "ED25519": 2,
+          "TLS1.3-HYBRID": 2,
+          "RSA-3072": 1,
+          "EC-P256": 3,
+          "ML-DSA": 2,
+          "RSA-2048": 1,
+          "DES": 1,
+          "MODE-ECB": 2,
+          "AES-UNK": 2,
+          "RSA-SUB2048": 1
+        }
+      },
+      "migration_plan": [
+        {
+          "catalog_id": "EC-P256",
+          "label": "ECC P-256 (ECDSA/ECDH)",
+          "threat": "SHOR",
+          "count": 3,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 15.0,
+          "score": 1205.1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 15y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/certs/modern_service.crt:1",
+            "demo-run/workdir/certs/modern_service.key:1",
+            "demo-run/workdir/app/payments/service.py:11"
+          ]
+        },
+        {
+          "catalog_id": "RSA-SUB2048",
+          "label": "RSA (<2048-bit)",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 15.0,
+          "score": 1181.7,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware; and stop using <2048 now",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 15y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/app/payments/service.py:8"
+          ]
+        },
+        {
+          "catalog_id": "MD5",
+          "label": "MD5",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 3,
+          "components": [
+            "legacy-batch",
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 324.4,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:4",
+            "demo-run/workdir/app/payments/service.py:14",
+            "demo-run/workdir/app/legacy/hash.py:7"
+          ]
+        },
+        {
+          "catalog_id": "MODE-ECB",
+          "label": "ECB mode (misuse)",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 2,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 321.3,
+          "replacement": "AES-256-GCM (AEAD)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:17",
+            "demo-run/workdir/app/payments/service.py:17"
+          ]
+        },
+        {
+          "catalog_id": "X25519",
+          "label": "X25519",
+          "threat": "SHOR",
+          "count": 4,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 255.8,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2",
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6",
+            "demo-run/workdir/app/crypto/vault.py:6"
+          ]
+        },
+        {
+          "catalog_id": "ED25519",
+          "label": "Ed25519",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 250.9,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:5",
+            "demo-run/workdir/app/crypto/vault.py:9"
+          ]
+        },
+        {
+          "catalog_id": "AES-UNK",
+          "label": "AES (key size unknown)",
+          "threat": "GROVER",
+          "count": 2,
+          "components": [
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 137.7,
+          "replacement": "Verify key size; use AES-256",
+          "rationale": "Grover-weakened: effective security roughly halves under a large quantum computer; raise key/output size, no protocol redesign needed.",
+          "locations": [
+            "demo-run/workdir/app/crypto/vault.py:12",
+            "demo-run/workdir/app/payments/service.py:17"
+          ]
+        },
+        {
+          "catalog_id": "RSA-UNK",
+          "label": "RSA (size unknown)",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 84.5,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:5",
+            "demo-run/workdir/app/api/AuthService.java:6"
+          ]
+        },
+        {
+          "catalog_id": "DH-SUB2048",
+          "label": "DH/FFDH (<2048-bit)",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2"
+          ]
+        },
+        {
+          "catalog_id": "RSA-2048",
+          "label": "RSA-2048",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:7"
+          ]
+        },
+        {
+          "catalog_id": "RSA-3072",
+          "label": "RSA-3072",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/openssl.cnf:2"
+          ]
+        },
+        {
+          "catalog_id": "SHA1",
+          "label": "SHA-1",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 3,
+          "components": [
+            "legacy-batch"
+          ],
+          "max_data_lifetime": 2,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 64.9,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:4",
+            "demo-run/workdir/app/api/AuthService.java:12",
+            "demo-run/workdir/app/legacy/hash.py:4"
+          ]
+        },
+        {
+          "catalog_id": "3DES",
+          "label": "3DES",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 63.6,
+          "replacement": "AES-256-GCM",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:12"
+          ]
+        },
+        {
+          "catalog_id": "DES",
+          "label": "DES",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 63.6,
+          "replacement": "AES-256-GCM",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:17"
+          ]
+        },
+        {
+          "catalog_id": "HYBRID-KEM",
+          "label": "Hybrid KEM (classical+ML-KEM)",
+          "threat": "HYBRID",
+          "count": 3,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 9.3,
+          "replacement": "Later: pure ML-KEM where policy allows",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2",
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.3-HYBRID",
+          "label": "TLS 1.3 (hybrid PQ key exchange configured)",
+          "threat": "HYBRID",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 9.2,
+          "replacement": "none needed -- verify the hybrid group is actually negotiated, not just configured",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/nginx.conf:3",
+            "demo-run/workdir/config/openssl.cnf:5"
+          ]
+        },
+        {
+          "catalog_id": "SHA-256",
+          "label": "SHA-256",
+          "threat": "PQ_SAFE",
+          "count": 3,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 6.2,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:8",
+            "demo-run/workdir/certs/modern_service.crt:1",
+            "demo-run/workdir/app/crypto/vault.py:17"
+          ]
+        },
+        {
+          "catalog_id": "CHACHA20",
+          "label": "ChaCha20(-Poly1305)",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:3",
+            "demo-run/workdir/config/nginx.conf:5"
+          ]
+        },
+        {
+          "catalog_id": "ML-DSA",
+          "label": "ML-DSA (44/65/87)",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/certs/legacy_partner.crt:1",
+            "demo-run/workdir/certs/legacy_partner.key:1"
+          ]
+        },
+        {
+          "catalog_id": "AES-256",
+          "label": "AES-256",
+          "threat": "PQ_SAFE",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.6,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:3"
+          ]
+        }
+      ],
+      "vex": {
+        "DES": {
+          "status": "affected",
+          "label": "DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "AES-256-GCM"
+        },
+        "MD5": {
+          "status": "affected",
+          "label": "MD5",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 3,
+          "previous_count": 4,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "ED25519": {
+          "status": "affected",
+          "label": "Ed25519",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "MODE-ECB": {
+          "status": "affected",
+          "label": "ECB mode (misuse)",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "AES-256-GCM (AEAD)"
+        },
+        "TLS1.1": {
+          "status": "fixed",
+          "label": "TLS 1.1",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange"
+        },
+        "SHA1": {
+          "status": "affected",
+          "label": "SHA-1",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 3,
+          "previous_count": 6,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "TLS1.3": {
+          "status": "fixed",
+          "label": "TLS 1.3 (classical KEX)",
+          "threat_class": "SHOR",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "Enable X25519MLKEM768 key share"
+        },
+        "RSA-UNK": {
+          "status": "affected",
+          "label": "RSA (size unknown)",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 7,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "AES-128": {
+          "status": "fixed",
+          "label": "AES-128",
+          "threat_class": "GROVER",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "AES-256 (CNSA 2.0 requires 256-bit keys)"
+        },
+        "RSA-2048": {
+          "status": "affected",
+          "label": "RSA-2048",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "EC-P256": {
+          "status": "affected",
+          "label": "ECC P-256 (ECDSA/ECDH)",
+          "threat_class": "SHOR",
+          "count": 3,
+          "previous_count": 4,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "RC4": {
+          "status": "fixed",
+          "label": "RC4",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 2,
+          "replacement": "AES-256-GCM or ChaCha20-Poly1305"
+        },
+        "3DES": {
+          "status": "affected",
+          "label": "3DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 1,
+          "previous_count": 2,
+          "replacement": "AES-256-GCM"
+        },
+        "RSA-SUB2048": {
+          "status": "affected",
+          "label": "RSA (<2048-bit)",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 4,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware; and stop using <2048 now"
+        },
+        "AES-UNK": {
+          "status": "affected",
+          "label": "AES (key size unknown)",
+          "threat_class": "GROVER",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "Verify key size; use AES-256"
+        },
+        "RSA-3072": {
+          "status": "affected",
+          "label": "RSA-3072",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 0,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "X25519": {
+          "status": "affected",
+          "label": "X25519",
+          "threat_class": "SHOR",
+          "count": 4,
+          "previous_count": 2,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later"
+        },
+        "DH-SUB2048": {
+          "status": "affected",
+          "label": "DH/FFDH (<2048-bit)",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now"
+        },
+        "TLS1.2": {
+          "status": "fixed",
+          "label": "TLS 1.2",
+          "threat_class": "SHOR",
+          "count": 0,
+          "previous_count": 2,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange"
+        },
+        "TLS1.0": {
+          "status": "fixed",
+          "label": "TLS 1.0",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "TLS 1.3 with hybrid PQ key exchange"
+        }
+      },
+      "remediation_applied": [
+        {
+          "action_id": "migrate-payments-tls-key",
+          "title": "Migrate payments TLS key EC P-256 -> hybrid X25519+ML-KEM-768",
+          "files_changed": [
+            "app/payments/service.py"
+          ],
+          "summary": "Same reasoning as the signing key: EC P-256 alone is Shor-breakable, so the replacement is a hybrid KEM, not a different curve.",
+          "resolves": [
+            "EC-P256"
+          ],
+          "applied_at": "2026-09-27T05:53:25.816915+00:00"
+        },
+        {
+          "action_id": "reissue-modern-service-cert",
+          "title": "Re-issue modern_service.crt as ML-DSA-65 (FIPS 204)",
+          "files_changed": [
+            "certs/modern_service.crt",
+            "certs/modern_service.key"
+          ],
+          "summary": "modern_service.crt was already today's classical best practice (EC P-256/SHA-256) -- not urgent, which is why this is the lowest-priority action in the catalog. Re-issued as ML-DSA-65 now that PQ certificate tooling is available, completing the wave.",
+          "resolves": [
+            "EC-P256"
+          ],
+          "applied_at": "2026-09-27T05:53:25.818602+00:00"
+        },
+        {
+          "action_id": "migrate-payments-signing-key",
+          "title": "Migrate payments signing key RSA-1024 -> ML-DSA-65",
+          "files_changed": [
+            "app/payments/service.py"
+          ],
+          "summary": "RSA is Shor-breakable at any key size, so this is a real algorithm migration, not a bigger key: signing now uses ML-DSA-65 (FIPS 204) via the liboqs-python API shape.",
+          "resolves": [
+            "RSA-SUB2048"
+          ],
+          "applied_at": "2026-09-27T05:53:25.818787+00:00"
+        }
+      ],
+      "target_met": false,
+      "decision": "continue",
+      "attestation": {
+        "commitments": 26,
+        "leaves": 40,
+        "zero_proofs_published": 6,
+        "merkle_root": "725a3c34e015b3efc01e54ac039639d629a16aded6ef1d26878a31ad6d93a8bc"
+      },
+      "artifacts": {
+        "qbom": "iterations/iteration-2/qbom.json",
+        "cbom": "iterations/iteration-2/qbom-cbom.json",
+        "report_md": "iterations/iteration-2/qbom-report.md",
+        "report_pdf": "iterations/iteration-2/qbom-report.pdf",
+        "dashboard": "iterations/iteration-2/qbom-dashboard.html",
+        "vex": "iterations/iteration-2/vex.json",
+        "attestation": "iterations/iteration-2/attestation.public.json"
+      }
+    },
+    {
+      "index": 3,
+      "timestamp": "2026-09-27T05:53:26.097876+00:00",
+      "scanned_root": "work_root",
+      "findings_total": 39,
+      "readiness": {
+        "total_findings": 39,
+        "by_threat_class": {
+          "CLASSICAL_BROKEN": 10,
+          "PQ_SAFE": 10,
+          "SHOR": 11,
+          "HYBRID": 6,
+          "GROVER": 2
+        },
+        "pq_ready_pct": 41.0,
+        "shor_vulnerable_pct": 28.2,
+        "grover_weakened_pct": 5.1,
+        "classically_broken_pct": 25.6,
+        "legacy_pq_pct": 0.0,
+        "distinct_algorithms": 18,
+        "_raw_counts": {
+          "MD5": 3,
+          "SHA-256": 2,
+          "3DES": 1,
+          "DH-SUB2048": 1,
+          "X25519": 4,
+          "HYBRID-KEM": 4,
+          "AES-256": 1,
+          "CHACHA20": 2,
+          "SHA1": 3,
+          "RSA-UNK": 2,
+          "ED25519": 2,
+          "TLS1.3-HYBRID": 2,
+          "RSA-3072": 1,
+          "ML-DSA": 5,
+          "RSA-2048": 1,
+          "DES": 1,
+          "MODE-ECB": 2,
+          "AES-UNK": 2
+        }
+      },
+      "migration_plan": [
+        {
+          "catalog_id": "MD5",
+          "label": "MD5",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 3,
+          "components": [
+            "legacy-batch",
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 324.4,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:4",
+            "demo-run/workdir/app/payments/service.py:17",
+            "demo-run/workdir/app/legacy/hash.py:7"
+          ]
+        },
+        {
+          "catalog_id": "MODE-ECB",
+          "label": "ECB mode (misuse)",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 2,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 321.3,
+          "replacement": "AES-256-GCM (AEAD)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:17",
+            "demo-run/workdir/app/payments/service.py:20"
+          ]
+        },
+        {
+          "catalog_id": "X25519",
+          "label": "X25519",
+          "threat": "SHOR",
+          "count": 4,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 255.8,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2",
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6",
+            "demo-run/workdir/app/crypto/vault.py:6"
+          ]
+        },
+        {
+          "catalog_id": "ED25519",
+          "label": "Ed25519",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 250.9,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:5",
+            "demo-run/workdir/app/crypto/vault.py:9"
+          ]
+        },
+        {
+          "catalog_id": "AES-UNK",
+          "label": "AES (key size unknown)",
+          "threat": "GROVER",
+          "count": 2,
+          "components": [
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 137.7,
+          "replacement": "Verify key size; use AES-256",
+          "rationale": "Grover-weakened: effective security roughly halves under a large quantum computer; raise key/output size, no protocol redesign needed.",
+          "locations": [
+            "demo-run/workdir/app/crypto/vault.py:12",
+            "demo-run/workdir/app/payments/service.py:20"
+          ]
+        },
+        {
+          "catalog_id": "RSA-UNK",
+          "label": "RSA (size unknown)",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 84.5,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:5",
+            "demo-run/workdir/app/api/AuthService.java:6"
+          ]
+        },
+        {
+          "catalog_id": "DH-SUB2048",
+          "label": "DH/FFDH (<2048-bit)",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2"
+          ]
+        },
+        {
+          "catalog_id": "RSA-2048",
+          "label": "RSA-2048",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:7"
+          ]
+        },
+        {
+          "catalog_id": "RSA-3072",
+          "label": "RSA-3072",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/openssl.cnf:2"
+          ]
+        },
+        {
+          "catalog_id": "SHA1",
+          "label": "SHA-1",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 3,
+          "components": [
+            "legacy-batch"
+          ],
+          "max_data_lifetime": 2,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 64.9,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:4",
+            "demo-run/workdir/app/api/AuthService.java:12",
+            "demo-run/workdir/app/legacy/hash.py:4"
+          ]
+        },
+        {
+          "catalog_id": "3DES",
+          "label": "3DES",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 63.6,
+          "replacement": "AES-256-GCM",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:12"
+          ]
+        },
+        {
+          "catalog_id": "DES",
+          "label": "DES",
+          "threat": "CLASSICAL_BROKEN",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 63.6,
+          "replacement": "AES-256-GCM",
+          "rationale": "Already broken or deprecated against classical attackers today -- fix regardless of quantum timeline.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:17"
+          ]
+        },
+        {
+          "catalog_id": "HYBRID-KEM",
+          "label": "Hybrid KEM (classical+ML-KEM)",
+          "threat": "HYBRID",
+          "count": 4,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 46.8,
+          "replacement": "Later: pure ML-KEM where policy allows",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2",
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6",
+            "demo-run/workdir/app/payments/service.py:14"
+          ]
+        },
+        {
+          "catalog_id": "ML-DSA",
+          "label": "ML-DSA (44/65/87)",
+          "threat": "PQ_SAFE",
+          "count": 5,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 18.9,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/certs/modern_service.crt:1",
+            "demo-run/workdir/certs/legacy_partner.crt:1",
+            "demo-run/workdir/certs/legacy_partner.key:1",
+            "demo-run/workdir/certs/modern_service.key:1",
+            "demo-run/workdir/app/payments/service.py:10"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.3-HYBRID",
+          "label": "TLS 1.3 (hybrid PQ key exchange configured)",
+          "threat": "HYBRID",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 9.2,
+          "replacement": "none needed -- verify the hybrid group is actually negotiated, not just configured",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/nginx.conf:3",
+            "demo-run/workdir/config/openssl.cnf:5"
+          ]
+        },
+        {
+          "catalog_id": "SHA-256",
+          "label": "SHA-256",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 6.1,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:8",
+            "demo-run/workdir/app/crypto/vault.py:17"
+          ]
+        },
+        {
+          "catalog_id": "CHACHA20",
+          "label": "ChaCha20(-Poly1305)",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:3",
+            "demo-run/workdir/config/nginx.conf:5"
+          ]
+        },
+        {
+          "catalog_id": "AES-256",
+          "label": "AES-256",
+          "threat": "PQ_SAFE",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.6,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:3"
+          ]
+        }
+      ],
+      "vex": {
+        "DES": {
+          "status": "affected",
+          "label": "DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "AES-256-GCM"
+        },
+        "MD5": {
+          "status": "affected",
+          "label": "MD5",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 3,
+          "previous_count": 3,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "ED25519": {
+          "status": "affected",
+          "label": "Ed25519",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "MODE-ECB": {
+          "status": "affected",
+          "label": "ECB mode (misuse)",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "AES-256-GCM (AEAD)"
+        },
+        "SHA1": {
+          "status": "affected",
+          "label": "SHA-1",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 3,
+          "previous_count": 3,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "RSA-UNK": {
+          "status": "affected",
+          "label": "RSA (size unknown)",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "RSA-2048": {
+          "status": "affected",
+          "label": "RSA-2048",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "EC-P256": {
+          "status": "fixed",
+          "label": "ECC P-256 (ECDSA/ECDH)",
+          "threat_class": "SHOR",
+          "count": 0,
+          "previous_count": 3,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "3DES": {
+          "status": "affected",
+          "label": "3DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "AES-256-GCM"
+        },
+        "RSA-SUB2048": {
+          "status": "fixed",
+          "label": "RSA (<2048-bit)",
+          "threat_class": "SHOR",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware; and stop using <2048 now"
+        },
+        "AES-UNK": {
+          "status": "affected",
+          "label": "AES (key size unknown)",
+          "threat_class": "GROVER",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "Verify key size; use AES-256"
+        },
+        "RSA-3072": {
+          "status": "affected",
+          "label": "RSA-3072",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "X25519": {
+          "status": "affected",
+          "label": "X25519",
+          "threat_class": "SHOR",
+          "count": 4,
+          "previous_count": 4,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later"
+        },
+        "DH-SUB2048": {
+          "status": "affected",
+          "label": "DH/FFDH (<2048-bit)",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now"
+        }
+      },
+      "remediation_applied": [
+        {
+          "action_id": "fix-broken-hashes",
+          "title": "Replace MD5/SHA-1 with SHA-256",
+          "files_changed": [
+            "app/api/AuthService.java",
+            "app/legacy/hash.py",
+            "app/payments/service.py",
+            "web-service/crypto-utils.js"
+          ],
+          "summary": "Swapped classically-broken digest calls for SHA-256 at each call site. No key-management change needed -- this is a same-shape replacement.",
+          "resolves": [
+            "MD5",
+            "SHA1"
+          ],
+          "applied_at": "2026-09-27T05:53:26.103210+00:00"
+        },
+        {
+          "action_id": "fix-symmetric-ciphers",
+          "title": "Replace DES/3DES and ECB mode with AES-256-GCM",
+          "files_changed": [
+            "app/api/AuthService.java",
+            "app/payments/service.py",
+            "web-service/crypto-utils.js"
+          ],
+          "summary": "DES/3DES block ciphers and unauthenticated ECB mode replaced with AES-256 in an authenticated (GCM) mode. `encrypt_card_batch` now takes an explicit nonce, matching the AEAD pattern already used elsewhere in this codebase.",
+          "resolves": [
+            "DES",
+            "3DES",
+            "MODE-ECB"
+          ],
+          "applied_at": "2026-09-27T05:53:26.103466+00:00"
+        },
+        {
+          "action_id": "fix-sshd-config",
+          "title": "Harden sshd_config key exchange, ciphers, MACs, host keys",
+          "files_changed": [
+            "config/sshd_config"
+          ],
+          "summary": "Dropped diffie-hellman-group1-sha1 and curve25519-sha256 from KexAlgorithms, keeping the already-present hybrid PQ group (sntrup761x25519). Dropped 3des-cbc and hmac-sha1. Dropped the legacy ssh-rsa host key, keeping ssh-ed25519 -- OpenSSH has no standardised post-quantum host-key algorithm yet, so this one item is a documented residual, not a fix.",
+          "resolves": [
+            "DH-SUB2048",
+            "X25519",
+            "3DES",
+            "SHA1",
+            "RSA-UNK"
+          ],
+          "applied_at": "2026-09-27T05:53:26.103731+00:00"
+        }
+      ],
+      "target_met": false,
+      "decision": "continue",
+      "attestation": {
+        "commitments": 20,
+        "leaves": 39,
+        "zero_proofs_published": 2,
+        "merkle_root": "4eea5470751bf2841b2f67584d2d076ca8ef17a3f78f9a4d34fc0f254e92c8d5"
+      },
+      "artifacts": {
+        "qbom": "iterations/iteration-3/qbom.json",
+        "cbom": "iterations/iteration-3/qbom-cbom.json",
+        "report_md": "iterations/iteration-3/qbom-report.md",
+        "report_pdf": "iterations/iteration-3/qbom-report.pdf",
+        "dashboard": "iterations/iteration-3/qbom-dashboard.html",
+        "vex": "iterations/iteration-3/vex.json",
+        "attestation": "iterations/iteration-3/attestation.public.json"
+      }
+    },
+    {
+      "index": 4,
+      "timestamp": "2026-09-27T05:53:26.377836+00:00",
+      "scanned_root": "work_root",
+      "findings_total": 32,
+      "readiness": {
+        "total_findings": 32,
+        "by_threat_class": {
+          "PQ_SAFE": 16,
+          "HYBRID": 6,
+          "SHOR": 8,
+          "GROVER": 2
+        },
+        "pq_ready_pct": 68.8,
+        "shor_vulnerable_pct": 25.0,
+        "grover_weakened_pct": 6.2,
+        "classically_broken_pct": 0.0,
+        "legacy_pq_pct": 0.0,
+        "distinct_algorithms": 12,
+        "_raw_counts": {
+          "SHA-256": 7,
+          "AES-256": 2,
+          "HYBRID-KEM": 4,
+          "CHACHA20": 2,
+          "ED25519": 2,
+          "TLS1.3-HYBRID": 2,
+          "X25519": 3,
+          "RSA-3072": 1,
+          "ML-DSA": 5,
+          "RSA-UNK": 1,
+          "RSA-2048": 1,
+          "AES-UNK": 2
+        }
+      },
+      "migration_plan": [
+        {
+          "catalog_id": "X25519",
+          "label": "X25519",
+          "threat": "SHOR",
+          "count": 3,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 253.4,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6",
+            "demo-run/workdir/app/crypto/vault.py:6"
+          ]
+        },
+        {
+          "catalog_id": "ED25519",
+          "label": "Ed25519",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [
+            "vault-svc"
+          ],
+          "max_data_lifetime": 7,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 7.0,
+          "score": 250.9,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 7y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:5",
+            "demo-run/workdir/app/crypto/vault.py:9"
+          ]
+        },
+        {
+          "catalog_id": "AES-UNK",
+          "label": "AES (key size unknown)",
+          "threat": "GROVER",
+          "count": 2,
+          "components": [
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 137.7,
+          "replacement": "Verify key size; use AES-256",
+          "rationale": "Grover-weakened: effective security roughly halves under a large quantum computer; raise key/output size, no protocol redesign needed.",
+          "locations": [
+            "demo-run/workdir/app/crypto/vault.py:12",
+            "demo-run/workdir/app/payments/service.py:21"
+          ]
+        },
+        {
+          "catalog_id": "RSA-2048",
+          "label": "RSA-2048",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:7"
+          ]
+        },
+        {
+          "catalog_id": "RSA-3072",
+          "label": "RSA-3072",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/openssl.cnf:2"
+          ]
+        },
+        {
+          "catalog_id": "RSA-UNK",
+          "label": "RSA (size unknown)",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/app/api/AuthService.java:6"
+          ]
+        },
+        {
+          "catalog_id": "HYBRID-KEM",
+          "label": "Hybrid KEM (classical+ML-KEM)",
+          "threat": "HYBRID",
+          "count": 4,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 46.8,
+          "replacement": "Later: pure ML-KEM where policy allows",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2",
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6",
+            "demo-run/workdir/app/payments/service.py:14"
+          ]
+        },
+        {
+          "catalog_id": "SHA-256",
+          "label": "SHA-256",
+          "threat": "PQ_SAFE",
+          "count": 7,
+          "components": [
+            "legacy-batch",
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 19.3,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:4",
+            "demo-run/workdir/web-service/crypto-utils.js:8",
+            "demo-run/workdir/app/api/AuthService.java:12",
+            "demo-run/workdir/app/crypto/vault.py:17",
+            "demo-run/workdir/app/payments/service.py:17",
+            "demo-run/workdir/app/legacy/hash.py:4",
+            "demo-run/workdir/app/legacy/hash.py:7"
+          ]
+        },
+        {
+          "catalog_id": "ML-DSA",
+          "label": "ML-DSA (44/65/87)",
+          "threat": "PQ_SAFE",
+          "count": 5,
+          "components": [
+            "payments-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 18.9,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/certs/modern_service.crt:1",
+            "demo-run/workdir/certs/legacy_partner.crt:1",
+            "demo-run/workdir/certs/legacy_partner.key:1",
+            "demo-run/workdir/certs/modern_service.key:1",
+            "demo-run/workdir/app/payments/service.py:10"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.3-HYBRID",
+          "label": "TLS 1.3 (hybrid PQ key exchange configured)",
+          "threat": "HYBRID",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 9.2,
+          "replacement": "none needed -- verify the hybrid group is actually negotiated, not just configured",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/nginx.conf:3",
+            "demo-run/workdir/config/openssl.cnf:5"
+          ]
+        },
+        {
+          "catalog_id": "AES-256",
+          "label": "AES-256",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:12",
+            "demo-run/workdir/config/sshd_config:3"
+          ]
+        },
+        {
+          "catalog_id": "CHACHA20",
+          "label": "ChaCha20(-Poly1305)",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:3",
+            "demo-run/workdir/config/nginx.conf:5"
+          ]
+        }
+      ],
+      "vex": {
+        "DES": {
+          "status": "fixed",
+          "label": "DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "AES-256-GCM"
+        },
+        "ED25519": {
+          "status": "affected",
+          "label": "Ed25519",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "MD5": {
+          "status": "fixed",
+          "label": "MD5",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 3,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "MODE-ECB": {
+          "status": "fixed",
+          "label": "ECB mode (misuse)",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 2,
+          "replacement": "AES-256-GCM (AEAD)"
+        },
+        "SHA1": {
+          "status": "fixed",
+          "label": "SHA-1",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 3,
+          "replacement": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        "AES-UNK": {
+          "status": "affected",
+          "label": "AES (key size unknown)",
+          "threat_class": "GROVER",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "Verify key size; use AES-256"
+        },
+        "RSA-UNK": {
+          "status": "affected",
+          "label": "RSA (size unknown)",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 2,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "RSA-2048": {
+          "status": "affected",
+          "label": "RSA-2048",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "RSA-3072": {
+          "status": "affected",
+          "label": "RSA-3072",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "X25519": {
+          "status": "affected",
+          "label": "X25519",
+          "threat_class": "SHOR",
+          "count": 3,
+          "previous_count": 4,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later"
+        },
+        "DH-SUB2048": {
+          "status": "fixed",
+          "label": "DH/FFDH (<2048-bit)",
+          "threat_class": "SHOR",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now"
+        },
+        "3DES": {
+          "status": "fixed",
+          "label": "3DES",
+          "threat_class": "CLASSICAL_BROKEN",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "AES-256-GCM"
+        }
+      },
+      "remediation_applied": [
+        {
+          "action_id": "migrate-vault-kex",
+          "title": "Migrate vault key-exchange X25519 -> hybrid X25519+ML-KEM-768",
+          "files_changed": [
+            "app/crypto/vault.py"
+          ],
+          "summary": "X25519 alone is Shor-breakable; the vault service now negotiates a hybrid classical+PQ group.",
+          "resolves": [
+            "X25519"
+          ],
+          "applied_at": "2026-09-27T05:53:26.383977+00:00"
+        },
+        {
+          "action_id": "migrate-vault-signing",
+          "title": "Migrate vault signing key Ed25519 -> ML-DSA-65",
+          "files_changed": [
+            "app/crypto/vault.py"
+          ],
+          "summary": "Ed25519 is Shor-breakable; vault signing now uses ML-DSA-65.",
+          "resolves": [
+            "ED25519"
+          ],
+          "applied_at": "2026-09-27T05:53:26.384218+00:00"
+        },
+        {
+          "action_id": "migrate-auth-service-keygen",
+          "title": "Migrate AuthService key generation RSA -> ML-DSA",
+          "files_changed": [
+            "app/api/AuthService.java"
+          ],
+          "summary": "Same reasoning as the Python signing-key migrations: RSA is Shor-breakable at any size, so the fix is an algorithm swap (BouncyCastle-PQC ML-DSA), not a bigger key.",
+          "resolves": [
+            "RSA-UNK",
+            "RSA-2048"
+          ],
+          "applied_at": "2026-09-27T05:53:26.384328+00:00"
+        }
+      ],
+      "target_met": false,
+      "decision": "continue",
+      "attestation": {
+        "commitments": 18,
+        "leaves": 32,
+        "zero_proofs_published": 6,
+        "merkle_root": "d6dcaa909c39e1c319eb77863a357e8516d57ce988272ad5aec55b40ccfddcb5"
+      },
+      "artifacts": {
+        "qbom": "iterations/iteration-4/qbom.json",
+        "cbom": "iterations/iteration-4/qbom-cbom.json",
+        "report_md": "iterations/iteration-4/qbom-report.md",
+        "report_pdf": "iterations/iteration-4/qbom-report.pdf",
+        "dashboard": "iterations/iteration-4/qbom-dashboard.html",
+        "vex": "iterations/iteration-4/vex.json",
+        "attestation": "iterations/iteration-4/attestation.public.json"
+      }
+    },
+    {
+      "index": 5,
+      "timestamp": "2026-09-27T05:53:26.573715+00:00",
+      "scanned_root": "work_root",
+      "findings_total": 31,
+      "readiness": {
+        "total_findings": 31,
+        "by_threat_class": {
+          "PQ_SAFE": 18,
+          "HYBRID": 7,
+          "SHOR": 4,
+          "GROVER": 2
+        },
+        "pq_ready_pct": 80.6,
+        "shor_vulnerable_pct": 12.9,
+        "grover_weakened_pct": 6.5,
+        "classically_broken_pct": 0.0,
+        "legacy_pq_pct": 0.0,
+        "distinct_algorithms": 10,
+        "_raw_counts": {
+          "SHA-256": 7,
+          "AES-256": 2,
+          "HYBRID-KEM": 5,
+          "CHACHA20": 2,
+          "ED25519": 1,
+          "TLS1.3-HYBRID": 2,
+          "X25519": 2,
+          "RSA-3072": 1,
+          "ML-DSA": 7,
+          "AES-UNK": 2
+        }
+      },
+      "migration_plan": [
+        {
+          "catalog_id": "AES-UNK",
+          "label": "AES (key size unknown)",
+          "threat": "GROVER",
+          "count": 2,
+          "components": [
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 137.7,
+          "replacement": "Verify key size; use AES-256",
+          "rationale": "Grover-weakened: effective security roughly halves under a large quantum computer; raise key/output size, no protocol redesign needed.",
+          "locations": [
+            "demo-run/workdir/app/crypto/vault.py:16",
+            "demo-run/workdir/app/payments/service.py:21"
+          ]
+        },
+        {
+          "catalog_id": "X25519",
+          "label": "X25519",
+          "threat": "SHOR",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 84.5,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6"
+          ]
+        },
+        {
+          "catalog_id": "ED25519",
+          "label": "Ed25519",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:5"
+          ]
+        },
+        {
+          "catalog_id": "RSA-3072",
+          "label": "RSA-3072",
+          "threat": "SHOR",
+          "count": 1,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 1.0,
+          "score": 83.6,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware",
+          "rationale": "Shor-breakable: an attacker recording traffic/data today can decrypt it once a CRQC exists. Data here must stay confidential 1y, against a ~10y conservative planning horizon.",
+          "locations": [
+            "demo-run/workdir/config/openssl.cnf:2"
+          ]
+        },
+        {
+          "catalog_id": "HYBRID-KEM",
+          "label": "Hybrid KEM (classical+ML-KEM)",
+          "threat": "HYBRID",
+          "count": 5,
+          "components": [
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 47.2,
+          "replacement": "Later: pure ML-KEM where policy allows",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:2",
+            "demo-run/workdir/config/nginx.conf:4",
+            "demo-run/workdir/config/openssl.cnf:6",
+            "demo-run/workdir/app/crypto/vault.py:9",
+            "demo-run/workdir/app/payments/service.py:14"
+          ]
+        },
+        {
+          "catalog_id": "ML-DSA",
+          "label": "ML-DSA (44/65/87)",
+          "threat": "PQ_SAFE",
+          "count": 7,
+          "components": [
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 19.3,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/certs/modern_service.crt:1",
+            "demo-run/workdir/certs/legacy_partner.crt:1",
+            "demo-run/workdir/certs/legacy_partner.key:1",
+            "demo-run/workdir/certs/modern_service.key:1",
+            "demo-run/workdir/app/api/AuthService.java:7",
+            "demo-run/workdir/app/crypto/vault.py:13",
+            "demo-run/workdir/app/payments/service.py:10"
+          ]
+        },
+        {
+          "catalog_id": "SHA-256",
+          "label": "SHA-256",
+          "threat": "PQ_SAFE",
+          "count": 7,
+          "components": [
+            "legacy-batch",
+            "payments-svc",
+            "vault-svc"
+          ],
+          "max_data_lifetime": 15,
+          "max_exposure": "internet_facing",
+          "hndl_years_exposed": 0.0,
+          "score": 19.3,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:4",
+            "demo-run/workdir/web-service/crypto-utils.js:8",
+            "demo-run/workdir/app/api/AuthService.java:12",
+            "demo-run/workdir/app/crypto/vault.py:21",
+            "demo-run/workdir/app/payments/service.py:17",
+            "demo-run/workdir/app/legacy/hash.py:4",
+            "demo-run/workdir/app/legacy/hash.py:7"
+          ]
+        },
+        {
+          "catalog_id": "TLS1.3-HYBRID",
+          "label": "TLS 1.3 (hybrid PQ key exchange configured)",
+          "threat": "HYBRID",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 9.2,
+          "replacement": "none needed -- verify the hybrid group is actually negotiated, not just configured",
+          "rationale": "Already hybrid classical+PQ; low urgency, monitor for pure-PQ migration once policy allows.",
+          "locations": [
+            "demo-run/workdir/config/nginx.conf:3",
+            "demo-run/workdir/config/openssl.cnf:5"
+          ]
+        },
+        {
+          "catalog_id": "AES-256",
+          "label": "AES-256",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/web-service/crypto-utils.js:12",
+            "demo-run/workdir/config/sshd_config:3"
+          ]
+        },
+        {
+          "catalog_id": "CHACHA20",
+          "label": "ChaCha20(-Poly1305)",
+          "threat": "PQ_SAFE",
+          "count": 2,
+          "components": [],
+          "max_data_lifetime": 1.0,
+          "max_exposure": "internal",
+          "hndl_years_exposed": 0.0,
+          "score": 3.7,
+          "replacement": "none needed",
+          "rationale": "Already quantum-safe with adequate margin.",
+          "locations": [
+            "demo-run/workdir/config/sshd_config:3",
+            "demo-run/workdir/config/nginx.conf:5"
+          ]
+        }
+      ],
+      "vex": {
+        "ED25519": {
+          "status": "affected",
+          "label": "Ed25519",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 2,
+          "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "AES-UNK": {
+          "status": "affected",
+          "label": "AES (key size unknown)",
+          "threat_class": "GROVER",
+          "count": 2,
+          "previous_count": 2,
+          "replacement": "Verify key size; use AES-256"
+        },
+        "RSA-UNK": {
+          "status": "fixed",
+          "label": "RSA (size unknown)",
+          "threat_class": "SHOR",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "RSA-2048": {
+          "status": "fixed",
+          "label": "RSA-2048",
+          "threat_class": "SHOR",
+          "count": 0,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "RSA-3072": {
+          "status": "affected",
+          "label": "RSA-3072",
+          "threat_class": "SHOR",
+          "count": 1,
+          "previous_count": 1,
+          "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        "X25519": {
+          "status": "affected",
+          "label": "X25519",
+          "threat_class": "SHOR",
+          "count": 2,
+          "previous_count": 3,
+          "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later"
+        }
+      },
+      "remediation_applied": [],
+      "target_met": true,
+      "decision": "target_met",
+      "attestation": {
+        "commitments": 12,
+        "leaves": 31,
+        "zero_proofs_published": 2,
+        "merkle_root": "eaa88fa230da2c2fb70bccbe60e03ace24cb2722eb48d6e1938ca689a42f63c7"
+      },
+      "artifacts": {
+        "qbom": "iterations/iteration-5/qbom.json",
+        "cbom": "iterations/iteration-5/qbom-cbom.json",
+        "report_md": "iterations/iteration-5/qbom-report.md",
+        "report_pdf": "iterations/iteration-5/qbom-report.pdf",
+        "dashboard": "iterations/iteration-5/qbom-dashboard.html",
+        "vex": "iterations/iteration-5/vex.json",
+        "attestation": "iterations/iteration-5/attestation.public.json"
+      }
+    }
+  ],
+  "remediation_applied_ids": [
+    "fix-broken-hashes",
+    "fix-nginx-tls",
+    "fix-openssl-cnf",
+    "fix-sshd-config",
+    "fix-symmetric-ciphers",
+    "migrate-auth-service-keygen",
+    "migrate-payments-signing-key",
+    "migrate-payments-tls-key",
+    "migrate-vault-kex",
+    "migrate-vault-signing",
+    "reissue-legacy-partner-cert",
+    "reissue-modern-service-cert"
+  ]
+}

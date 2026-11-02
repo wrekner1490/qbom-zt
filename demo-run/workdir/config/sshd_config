@@ -1,0 +1,5 @@
+Port 22
+KexAlgorithms sntrup761x25519-sha512@openssh.com
+Ciphers aes256-gcm@openssh.com,chacha20-poly1305@openssh.com
+MACs hmac-sha2-256,hmac-sha2-512
+HostKeyAlgorithms ssh-ed25519

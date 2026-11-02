@@ -1,0 +1,722 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:947c89a2-2061-46bf-b8c8-c8b35372978f",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-27T05:53:25.034606+00:00",
+    "component": {
+      "type": "application",
+      "name": "Acme Corp"
+    },
+    "properties": [
+      {
+        "name": "qbom:catalogHash",
+        "value": "5a06fc0a9f41c8cf2d41dfc7f66c2aa946da52b46806ca99b96e303a7c07a7b9"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/md5",
+      "name": "MD5",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "0"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "4"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/sha-256",
+      "name": "SHA-256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash",
+          "nistQuantumSecurityLevel": 2
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "PQ_SAFE"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "128"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "none needed"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "3"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/3des",
+      "name": "3DES",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "112"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "AES-256-GCM"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/dh-sub2048",
+      "name": "DH/FFDH (<2048-bit)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "80"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first; stop using <2048 now"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/x25519",
+      "name": "X25519",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "key-agree",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "128"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "Hybrid X25519MLKEM768 now, ML-KEM-768 later"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/hybrid-kem",
+      "name": "Hybrid KEM (classical+ML-KEM)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "kem",
+          "nistQuantumSecurityLevel": 3
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "HYBRID"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "192"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "Later: pure ML-KEM where policy allows"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/aes-256",
+      "name": "AES-256",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "nistQuantumSecurityLevel": 5
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "PQ_SAFE"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "256"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "none needed"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/chacha20",
+      "name": "ChaCha20(-Poly1305)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "stream-cipher",
+          "nistQuantumSecurityLevel": 5
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "PQ_SAFE"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "256"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "none needed"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/sha1",
+      "name": "SHA-1",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "hash",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "63"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "SHA-256 / SHA3-256 (or SHA-384 for CNSA 2.0)"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "6"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/rsa-unk",
+      "name": "RSA (size unknown)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "pke",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "112"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "7"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/ed25519",
+      "name": "Ed25519",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "128"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/tls1.0",
+      "name": "TLS 1.0",
+      "cryptoProperties": {
+        "assetType": "protocol",
+        "algorithmProperties": null,
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "0"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "TLS 1.3 with hybrid PQ key exchange"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/tls1.1",
+      "name": "TLS 1.1",
+      "cryptoProperties": {
+        "assetType": "protocol",
+        "algorithmProperties": null,
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "0"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "TLS 1.3 with hybrid PQ key exchange"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/tls1.2",
+      "name": "TLS 1.2",
+      "cryptoProperties": {
+        "assetType": "protocol",
+        "algorithmProperties": null,
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "112"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "TLS 1.3 with hybrid PQ key exchange"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/tls1.3",
+      "name": "TLS 1.3 (classical KEX)",
+      "cryptoProperties": {
+        "assetType": "protocol",
+        "algorithmProperties": null,
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "128"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "Enable X25519MLKEM768 key share"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/ec-p256",
+      "name": "ECC P-256 (ECDSA/ECDH)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "signature",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "128"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "4"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/aes-128",
+      "name": "AES-128",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "nistQuantumSecurityLevel": 1
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "GROVER"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "128"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "AES-256 (CNSA 2.0 requires 256-bit keys)"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/rc4",
+      "name": "RC4",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "stream-cipher",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "0"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "AES-256-GCM or ChaCha20-Poly1305"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/rsa-sub2048",
+      "name": "RSA (<2048-bit)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "pke",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "80"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware; and stop using <2048 now"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "4"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/rsa-2048",
+      "name": "RSA-2048",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "pke",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "SHOR"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "112"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/des",
+      "name": "DES",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "56"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "AES-256-GCM"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "1"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/mode-ecb",
+      "name": "ECB mode (misuse)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "CLASSICAL_BROKEN"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "0"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "AES-256-GCM (AEAD)"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    },
+    {
+      "type": "cryptographic-asset",
+      "bom-ref": "crypto/aes-unk",
+      "name": "AES (key size unknown)",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "block-cipher",
+          "nistQuantumSecurityLevel": 1
+        },
+        "oid": null
+      },
+      "properties": [
+        {
+          "name": "qbom:threatClass",
+          "value": "GROVER"
+        },
+        {
+          "name": "qbom:classicalSecurityBits",
+          "value": "128"
+        },
+        {
+          "name": "qbom:recommendedReplacement",
+          "value": "Verify key size; use AES-256"
+        },
+        {
+          "name": "qbom:occurrenceCount",
+          "value": "2"
+        }
+      ]
+    }
+  ]
+}

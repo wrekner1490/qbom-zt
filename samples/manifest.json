@@ -1,0 +1,12 @@
+{
+  "components": {
+    "payments-svc": {"exposure": "internet_facing", "data_sensitivity": "critical", "data_lifetime_years": 15, "owner": "payments-team"},
+    "legacy-batch": {"exposure": "internal", "data_sensitivity": "medium", "data_lifetime_years": 2, "owner": "platform-team"},
+    "vault-svc": {"exposure": "internal", "data_sensitivity": "high", "data_lifetime_years": 7, "owner": "security-team"}
+  },
+  "path_to_component": {
+    "samples/vulnerable-app/app/payments": "payments-svc",
+    "samples/vulnerable-app/app/legacy": "legacy-batch",
+    "samples/vulnerable-app/app/crypto": "vault-svc"
+  }
+}

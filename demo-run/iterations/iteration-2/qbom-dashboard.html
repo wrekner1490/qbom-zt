@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QBOM Dashboard &mdash; Acme Corp</title>
+<style>
+  :root {
+    --bg:#0B1220; --panel:#111A2E; --panel2:#0E1626; --border:#22304A;
+    --text:#E5EAF3; --muted:#8B9AB8; --accent:#3B82F6;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+          font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  header { padding:28px 32px 20px; border-bottom:1px solid var(--border);
+            background:linear-gradient(180deg,#101A30,#0B1220); }
+  header h1 { margin:0 0 4px; font-size:22px; }
+  header .org { color:var(--accent); font-weight:600; }
+  header .meta { color:var(--muted); font-size:12.5px; margin-top:6px; }
+  main { max-width:1180px; margin:0 auto; padding:24px 32px 60px; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px;
+            padding:22px 24px; margin-bottom:26px; }
+  .panel h2 { margin:0 0 6px; font-size:16px; }
+  .panel-desc { color:var(--muted); font-size:13px; margin:0 0 16px; line-height:1.5; }
+  code { background:#0A1122; padding:1px 5px; border-radius:4px; font-size:12px; color:#9DC0FF; }
+
+  .summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:4px; }
+  .summary-card { background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+  .summary-card .v { font-size:24px; font-weight:700; }
+  .summary-card .l { font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  .pipeline-flow { display:flex; align-items:center; gap:6px; margin:6px 0 22px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); }
+  .pipeline-flow .node { background:var(--panel2); border:1px solid var(--border); border-radius:8px; padding:6px 12px; color:var(--text); }
+  .pipeline-flow .arrow { color:var(--accent); }
+
+  .stage-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .stage-card { background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:16px; }
+  .stage-card.empty { color:var(--muted); text-align:center; padding:30px; }
+  .stage-head { display:flex; align-items:center; gap:10px; }
+  .stage-badge { background:var(--accent); color:white; font-weight:700; font-size:13px;
+                  border-radius:8px; padding:3px 9px; }
+  .stage-head h3 { margin:0; font-size:14px; }
+  .stage-desc { color:var(--muted); font-size:12px; line-height:1.5; margin:8px 0 10px; }
+  .stage-bar-track { height:6px; background:#1B2740; border-radius:4px; overflow:hidden; }
+  .stage-bar-fill { height:100%; background:var(--accent); }
+  .stage-pct { font-size:11px; color:var(--muted); margin:4px 0 10px; }
+  .rule-list { list-style:none; margin:0; padding:0; font-size:11.5px; }
+  .rule-list li { display:flex; justify-content:space-between; padding:3px 0; border-top:1px solid var(--border); }
+  .rule-list li:first-child { border-top:none; }
+  .rule-list .rc { color:var(--accent); font-weight:700; }
+  .rule-list .more { color:var(--muted); font-style:italic; justify-content:flex-start; }
+
+  .threat-row { display:grid; grid-template-columns:280px 1fr 90px; align-items:center; gap:14px; padding:8px 0; }
+  .threat-label { font-size:13px; display:flex; flex-direction:column; }
+  .threat-sub { color:var(--muted); font-size:11px; margin-top:2px; }
+  .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:7px; }
+  .threat-bar-track { height:10px; background:#1B2740; border-radius:5px; overflow:hidden; }
+  .threat-bar-fill { height:100%; }
+  .threat-count { text-align:right; font-weight:700; font-size:13px; }
+  .threat-pct { color:var(--muted); font-weight:400; font-size:11px; }
+
+  .catalog-legend { display:flex; gap:18px; font-size:12px; color:var(--muted); margin-bottom:14px; flex-wrap:wrap; }
+  .catalog-legend .sw { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .catalog-section { margin-bottom:20px; }
+  .catalog-section-head { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .catalog-section-head h4 { margin:0; font-size:13.5px; }
+  .catalog-section-sub { color:var(--muted); font-size:11.5px; margin-left:auto; }
+  .tile-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+  .tile { position:relative; background:#0E1626; border:1px solid var(--border); border-radius:8px;
+           padding:8px 10px; opacity:0.42; filter:grayscale(0.6); }
+  .tile.found { opacity:1; filter:none; border-color:var(--tc,#16A34A); background:linear-gradient(135deg,rgba(255,255,255,0.02),transparent); box-shadow:0 0 0 1px var(--tc,#16A34A) inset; }
+  .tile-name { display:block; font-size:12px; font-weight:600; }
+  .tile-id { display:block; font-size:10px; color:var(--muted); margin-top:2px; font-family:monospace; }
+  .tile-count { position:absolute; top:6px; right:8px; background:var(--tc,#16A34A); color:#03170A;
+                 font-size:10.5px; font-weight:800; border-radius:999px; padding:1px 7px; }
+
+  .metrics-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:14px; }
+  .metric { background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:14px; text-align:center; }
+  .metric-val { font-size:22px; font-weight:700; }
+  .metric-label { font-size:11px; color:var(--muted); margin-top:4px; }
+  .mono-box { font-family:monospace; font-size:11px; color:#9DC0FF; background:#0A1122;
+               border:1px solid var(--border); border-radius:8px; padding:10px 12px; word-break:break-all; }
+  footer { text-align:center; color:var(--muted); font-size:11px; padding:20px; }
+
+  .eng-panel { border-color:#2A4A7A; background:linear-gradient(180deg,#101C33,#111A2E); }
+  .eng-status { font-size:11px; font-weight:700; padding:3px 10px; border-radius:999px; margin-left:10px; vertical-align:2px; }
+  .eng-steps { display:flex; flex-direction:column; gap:12px; margin-top:10px; }
+  .eng-step { background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+  .eng-step-head { display:flex; align-items:center; gap:12px; }
+  .eng-step-badge { min-width:22px; height:22px; border-radius:50%; color:#03170A; font-weight:800;
+                      font-size:12px; display:flex; align-items:center; justify-content:center; padding:0 5px; }
+  .eng-step-title { font-size:13px; font-weight:600; }
+  .eng-step-sub { font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .eng-step-pct { margin-left:auto; font-size:18px; font-weight:800; }
+  .eng-step-bar-track { position:relative; height:8px; background:#1B2740; border-radius:4px; margin-top:8px; overflow:visible; }
+  .eng-step-bar-fill { height:100%; border-radius:4px; }
+  .eng-step-target-mark { position:absolute; top:-3px; width:2px; height:14px; background:#F8FAFC; opacity:0.85; }
+</style>
+</head>
+<body>
+<header>
+  <h1>QBOM Dashboard &mdash; <span class="org">Acme Corp</span></h1>
+  <div class="meta">Generated 2026-09-27T05:53:25.435720+00:00 &middot; catalog v1
+    (5a06fc0a9f41c8cf...) &middot; 20/49 catalog entries observed</div>
+</header>
+<main>
+
+  
+      <section class="panel eng-panel">
+        <h2>0&nbsp;&middot;&nbsp;Engagement loop
+          <span class="eng-status" style="background:#3B82F622;color:#3B82F6;border:1px solid #3B82F655;">In progress</span>
+        </h2>
+        <p class="panel-desc">Commit &#8594; scan &#8594; threat analysis &amp; recommendations &#8594;
+          organisation accepts the readiness % and continues, or stops &#8594; recommendations applied to
+          infra &#8594; rescan &#8594; repeat until <b>80.0%</b> post-quantum readiness is reached or the
+          organisation ends the loop. Target line shown as a marker on each bar.</p>
+        <p class="panel-desc"><b>Consent:</b> Priya Sharma, CISO on behalf of Acme Corp, 2026-09-27T05:53:24.995708+00:00.</p>
+        <div class="eng-steps">
+        <div class="eng-step">
+          <div class="eng-step-head">
+            <span class="eng-step-badge" style="background:#3B82F6">1</span>
+            <div>
+              <div class="eng-step-title">Iteration 1 &middot; scanned original</div>
+              <div class="eng-step-sub">53 findings &middot; Accepted — continued
+                 &middot; 3 remediation action(s) applied next</div>
+            </div>
+            <div class="eng-step-pct" style="color:#3B82F6">13.2%</div>
+          </div>
+          <div class="eng-step-bar-track">
+            <div class="eng-step-bar-fill" style="width:13.2%;background:#3B82F6"></div>
+            <div class="eng-step-target-mark" style="left:80.0%" title="target 80.0%"></div>
+          </div>
+        </div>
+        <div class="eng-step">
+          <div class="eng-step-head">
+            <span class="eng-step-badge" style="background:#D97706">2</span>
+            <div>
+              <div class="eng-step-title">Iteration 2 &middot; scanned work_root</div>
+              <div class="eng-step-sub">40 findings &middot; Awaiting decision
+                </div>
+            </div>
+            <div class="eng-step-pct" style="color:#D97706">32.5%</div>
+          </div>
+          <div class="eng-step-bar-track">
+            <div class="eng-step-bar-fill" style="width:32.5%;background:#D97706"></div>
+            <div class="eng-step-target-mark" style="left:80.0%" title="target 80.0%"></div>
+          </div>
+        </div></div>
+      </section>
+
+  <section class="summary-grid" style="margin-bottom:26px;">
+    <div class="summary-card"><div class="v">40</div><div class="l">total findings</div></div>
+    <div class="summary-card"><div class="v">20</div><div class="l">distinct algorithms/protocols</div></div>
+    <div class="summary-card"><div class="v">4</div><div class="l">analysers that fired</div></div>
+    <div class="summary-card"><div class="v">32.5%</div><div class="l">quantum-safe today</div></div>
+    <div class="summary-card"><div class="v">37.5%</div><div class="l">Shor-vulnerable</div></div>
+  </section>
+
+  <section class="panel">
+    <h2>1&nbsp;&middot;&nbsp;Pipeline</h2>
+    <p class="panel-desc">Every scan runs the same fixed pipeline: no crawling, no execution of target code,
+      no network access needed to produce a QBOM.</p>
+    <div class="pipeline-flow">
+      <span class="node">Directory walk</span><span class="arrow">&#8594;</span>
+      <span class="node">3 static analysers (parallel, per-file)</span><span class="arrow">&#8594;</span>
+      <span class="node">Catalog token resolution</span><span class="arrow">&#8594;</span>
+      <span class="node">Risk scoring (HNDL &times; exposure &times; sensitivity)</span><span class="arrow">&#8594;</span>
+      <span class="node">Reports + optional zero-trust attestation</span>
+    </div>
+    <h2 style="margin-top:4px;">2&nbsp;&middot;&nbsp;Analysers &amp; what each one found</h2>
+    <div class="stage-grid">
+        <div class="stage-card">
+          <div class="stage-head">
+            <span class="stage-badge">11</span>
+            <h3>Python AST Analyser</h3>
+          </div>
+          <p class="stage-desc">Parses Python source with ast (never executes it) and matches call sites against known crypto APIs -- hashlib, cryptography, pycryptodome key/cipher constructors.</p>
+          <div class="stage-bar-track"><div class="stage-bar-fill" style="width:27.5%"></div></div>
+          <div class="stage-pct">27.5% of all findings</div>
+          <ul class="rule-list"><li><code>python-ast:hashlib</code><span class="rc">4</span></li><li><code>python-ast:algorithms.AES</code><span class="rc">2</span></li><li><code>python-ast:x25519.generate</code><span class="rc">1</span></li><li><code>python-ast:ed25519.generate</code><span class="rc">1</span></li><li><code>python-ast:rsa.generate_private_key</code><span class="rc">1</span></li><li><code>python-ast:ec.generate_private_key</code><span class="rc">1</span></li><li class="more">+1 more rule(s)</li></ul>
+        </div>
+        <div class="stage-card">
+          <div class="stage-head">
+            <span class="stage-badge">24</span>
+            <h3>Config &amp; Text Pattern Analyser</h3>
+          </div>
+          <p class="stage-desc">Line-oriented pattern extractors for declarative config (sshd, nginx, Apache, openssl.cnf, Java/Node crypto calls, JWT alg headers) resolved through the same catalog tokenizer.</p>
+          <div class="stage-bar-track"><div class="stage-bar-fill" style="width:60.0%"></div></div>
+          <div class="stage-pct">60.0% of all findings</div>
+          <ul class="rule-list"><li><code>regex:sshd-kex</code><span class="rc">3</span></li><li><code>regex:node-createhash</code><span class="rc">2</span></li><li><code>regex:sshd-ciphers</code><span class="rc">2</span></li><li><code>regex:sshd-hostkeys</code><span class="rc">2</span></li><li><code>regex:nginx-ssl-ecdh-curve</code><span class="rc">2</span></li><li><code>regex:openssl-cnf-groups</code><span class="rc">2</span></li><li class="more">+10 more rule(s)</li></ul>
+        </div>
+        <div class="stage-card">
+          <div class="stage-head">
+            <span class="stage-badge">3</span>
+            <h3>X.509 Certificate Analyser</h3>
+          </div>
+          <p class="stage-desc">Structurally parses certificates with the `cryptography` library and reads the public-key algorithm and signature-hash algorithm directly -- no guessing.</p>
+          <div class="stage-bar-track"><div class="stage-bar-fill" style="width:7.5%"></div></div>
+          <div class="stage-pct">7.5% of all findings</div>
+          <ul class="rule-list"><li><code>x509-cert:public_key</code><span class="rc">2</span></li><li><code>x509-cert:signature_hash</code><span class="rc">1</span></li></ul>
+        </div>
+        <div class="stage-card">
+          <div class="stage-head">
+            <span class="stage-badge">2</span>
+            <h3>PEM Private Key Analyser</h3>
+          </div>
+          <p class="stage-desc">Structurally parses PEM private keys and classifies the key type/curve/size.</p>
+          <div class="stage-bar-track"><div class="stage-bar-fill" style="width:5.0%"></div></div>
+          <div class="stage-pct">5.0% of all findings</div>
+          <ul class="rule-list"><li><code>pem:private_key</code><span class="rc">2</span></li></ul>
+        </div></div>
+  </section>
+
+  <section class="panel">
+    <h2>3&nbsp;&middot;&nbsp;Findings by quantum-threat class</h2>
+    
+        <div class="threat-row">
+          <div class="threat-label"><span class="dot" style="background:#DC2626"></span>Shor-vulnerable
+            <span class="threat-sub">Existential break under a cryptographically relevant quantum computer.</span></div>
+          <div class="threat-bar-track"><div class="threat-bar-fill" style="width:37.5%;background:#DC2626"></div></div>
+          <div class="threat-count">15 <span class="threat-pct">(37.5%)</span></div>
+        </div>
+        <div class="threat-row">
+          <div class="threat-label"><span class="dot" style="background:#991B1B"></span>Classically broken
+            <span class="threat-sub">Already exploitable today, no quantum computer needed.</span></div>
+          <div class="threat-bar-track"><div class="threat-bar-fill" style="width:25.0%;background:#991B1B"></div></div>
+          <div class="threat-count">10 <span class="threat-pct">(25.0%)</span></div>
+        </div>
+        <div class="threat-row">
+          <div class="threat-label"><span class="dot" style="background:#D97706"></span>Grover-weakened
+            <span class="threat-sub">Effective security roughly halved; margin fix, not a redesign.</span></div>
+          <div class="threat-bar-track"><div class="threat-bar-fill" style="width:5.0%;background:#D97706"></div></div>
+          <div class="threat-count">2 <span class="threat-pct">(5.0%)</span></div>
+        </div>
+        <div class="threat-row">
+          <div class="threat-label"><span class="dot" style="background:#0D9488"></span>Hybrid classical+PQ
+            <span class="threat-sub">Already combines a classical scheme with a PQ one.</span></div>
+          <div class="threat-bar-track"><div class="threat-bar-fill" style="width:12.5%;background:#0D9488"></div></div>
+          <div class="threat-count">5 <span class="threat-pct">(12.5%)</span></div>
+        </div>
+        <div class="threat-row">
+          <div class="threat-label"><span class="dot" style="background:#16A34A"></span>Quantum-safe
+            <span class="threat-sub">NIST-standardised PQC, or adequate symmetric/hash margin.</span></div>
+          <div class="threat-bar-track"><div class="threat-bar-fill" style="width:20.0%;background:#16A34A"></div></div>
+          <div class="threat-count">8 <span class="threat-pct">(20.0%)</span></div>
+        </div>
+  </section>
+
+  <section class="panel">
+    <h2>4&nbsp;&middot;&nbsp;Crypto asset catalog coverage</h2>
+    <p class="panel-desc">The full, fixed catalog this scanner can recognise (append-only &mdash; order is part of
+      the zero-trust commitment format). <b style="color:#22C55E;">Lit</b> tiles were observed in this scan
+      (occurrence count badge, top-right); dimmed tiles were not.</p>
+    <div class="catalog-legend">
+      <span><span class="sw" style="background:#16A34A"></span>found in this scan</span>
+      <span><span class="sw" style="background:#374151"></span>in catalog, not observed</span>
+    </div>
+    
+        <div class="catalog-section">
+          <div class="catalog-section-head">
+            <span class="dot" style="background:#DC2626"></span>
+            <h4>Shor-vulnerable</h4>
+            <span class="catalog-section-sub">8/17 seen in this scan</span>
+          </div>
+          <div class="tile-grid"><div class="tile found" style="--tc:#DC2626" title="RSA (&lt;2048-bit) (RSA-SUB2048) &mdash; seen 1x"><span class="tile-name">RSA (&lt;2048-bit)</span><span class="tile-id">RSA-SUB2048</span><span class="tile-count">1</span></div><div class="tile found" style="--tc:#DC2626" title="RSA-2048 (RSA-2048) &mdash; seen 1x"><span class="tile-name">RSA-2048</span><span class="tile-id">RSA-2048</span><span class="tile-count">1</span></div><div class="tile found" style="--tc:#DC2626" title="RSA-3072 (RSA-3072) &mdash; seen 1x"><span class="tile-name">RSA-3072</span><span class="tile-id">RSA-3072</span><span class="tile-count">1</span></div><div class="tile"  title="RSA-4096+ (RSA-4096) &mdash; not observed in this scan"><span class="tile-name">RSA-4096+</span><span class="tile-id">RSA-4096</span></div><div class="tile found" style="--tc:#DC2626" title="RSA (size unknown) (RSA-UNK) &mdash; seen 2x"><span class="tile-name">RSA (size unknown)</span><span class="tile-id">RSA-UNK</span><span class="tile-count">2</span></div><div class="tile found" style="--tc:#DC2626" title="DH/FFDH (&lt;2048-bit) (DH-SUB2048) &mdash; seen 1x"><span class="tile-name">DH/FFDH (&lt;2048-bit)</span><span class="tile-id">DH-SUB2048</span><span class="tile-count">1</span></div><div class="tile"  title="DH/FFDH (&gt;=2048-bit) (DH-2048) &mdash; not observed in this scan"><span class="tile-name">DH/FFDH (&gt;=2048-bit)</span><span class="tile-id">DH-2048</span></div><div class="tile"  title="DSA (DSA) &mdash; not observed in this scan"><span class="tile-name">DSA</span><span class="tile-id">DSA</span></div><div class="tile found" style="--tc:#DC2626" title="ECC P-256 (ECDSA/ECDH) (EC-P256) &mdash; seen 3x"><span class="tile-name">ECC P-256 (ECDSA/ECDH)</span><span class="tile-id">EC-P256</span><span class="tile-count">3</span></div><div class="tile"  title="ECC P-384 (ECDSA/ECDH) (EC-P384) &mdash; not observed in this scan"><span class="tile-name">ECC P-384 (ECDSA/ECDH)</span><span class="tile-id">EC-P384</span></div><div class="tile"  title="ECC P-521 (ECDSA/ECDH) (EC-P521) &mdash; not observed in this scan"><span class="tile-name">ECC P-521 (ECDSA/ECDH)</span><span class="tile-id">EC-P521</span></div><div class="tile found" style="--tc:#DC2626" title="Ed25519 (ED25519) &mdash; seen 2x"><span class="tile-name">Ed25519</span><span class="tile-id">ED25519</span><span class="tile-count">2</span></div><div class="tile"  title="Ed448 (ED448) &mdash; not observed in this scan"><span class="tile-name">Ed448</span><span class="tile-id">ED448</span></div><div class="tile found" style="--tc:#DC2626" title="X25519 (X25519) &mdash; seen 4x"><span class="tile-name">X25519</span><span class="tile-id">X25519</span><span class="tile-count">4</span></div><div class="tile"  title="X448 (X448) &mdash; not observed in this scan"><span class="tile-name">X448</span><span class="tile-id">X448</span></div><div class="tile"  title="TLS 1.2 (TLS1.2) &mdash; not observed in this scan"><span class="tile-name">TLS 1.2</span><span class="tile-id">TLS1.2</span></div><div class="tile"  title="TLS 1.3 (classical KEX) (TLS1.3) &mdash; not observed in this scan"><span class="tile-name">TLS 1.3 (classical KEX)</span><span class="tile-id">TLS1.3</span></div></div>
+        </div>
+        <div class="catalog-section">
+          <div class="catalog-section-head">
+            <span class="dot" style="background:#991B1B"></span>
+            <h4>Classically broken</h4>
+            <span class="catalog-section-sub">5/10 seen in this scan</span>
+          </div>
+          <div class="tile-grid"><div class="tile found" style="--tc:#991B1B" title="MD5 (MD5) &mdash; seen 3x"><span class="tile-name">MD5</span><span class="tile-id">MD5</span><span class="tile-count">3</span></div><div class="tile found" style="--tc:#991B1B" title="SHA-1 (SHA1) &mdash; seen 3x"><span class="tile-name">SHA-1</span><span class="tile-id">SHA1</span><span class="tile-count">3</span></div><div class="tile found" style="--tc:#991B1B" title="DES (DES) &mdash; seen 1x"><span class="tile-name">DES</span><span class="tile-id">DES</span><span class="tile-count">1</span></div><div class="tile found" style="--tc:#991B1B" title="3DES (3DES) &mdash; seen 1x"><span class="tile-name">3DES</span><span class="tile-id">3DES</span><span class="tile-count">1</span></div><div class="tile"  title="RC4 (RC4) &mdash; not observed in this scan"><span class="tile-name">RC4</span><span class="tile-id">RC4</span></div><div class="tile"  title="Blowfish (BLOWFISH) &mdash; not observed in this scan"><span class="tile-name">Blowfish</span><span class="tile-id">BLOWFISH</span></div><div class="tile found" style="--tc:#991B1B" title="ECB mode (misuse) (MODE-ECB) &mdash; seen 2x"><span class="tile-name">ECB mode (misuse)</span><span class="tile-id">MODE-ECB</span><span class="tile-count">2</span></div><div class="tile"  title="SSLv2/SSLv3 (SSL-2/3) &mdash; not observed in this scan"><span class="tile-name">SSLv2/SSLv3</span><span class="tile-id">SSL-2/3</span></div><div class="tile"  title="TLS 1.0 (TLS1.0) &mdash; not observed in this scan"><span class="tile-name">TLS 1.0</span><span class="tile-id">TLS1.0</span></div><div class="tile"  title="TLS 1.1 (TLS1.1) &mdash; not observed in this scan"><span class="tile-name">TLS 1.1</span><span class="tile-id">TLS1.1</span></div></div>
+        </div>
+        <div class="catalog-section">
+          <div class="catalog-section-head">
+            <span class="dot" style="background:#D97706"></span>
+            <h4>Grover-weakened</h4>
+            <span class="catalog-section-sub">1/4 seen in this scan</span>
+          </div>
+          <div class="tile-grid"><div class="tile"  title="AES-128 (AES-128) &mdash; not observed in this scan"><span class="tile-name">AES-128</span><span class="tile-id">AES-128</span></div><div class="tile"  title="AES-192 (AES-192) &mdash; not observed in this scan"><span class="tile-name">AES-192</span><span class="tile-id">AES-192</span></div><div class="tile found" style="--tc:#D97706" title="AES (key size unknown) (AES-UNK) &mdash; seen 2x"><span class="tile-name">AES (key size unknown)</span><span class="tile-id">AES-UNK</span><span class="tile-count">2</span></div><div class="tile"  title="SHA-224 (SHA-224) &mdash; not observed in this scan"><span class="tile-name">SHA-224</span><span class="tile-id">SHA-224</span></div></div>
+        </div>
+        <div class="catalog-section">
+          <div class="catalog-section-head">
+            <span class="dot" style="background:#7C3AED"></span>
+            <h4>Pre-standard PQ</h4>
+            <span class="catalog-section-sub">0/2 seen in this scan</span>
+          </div>
+          <div class="tile-grid"><div class="tile"  title="Kyber (pre-standard) (KYBER-LEGACY) &mdash; not observed in this scan"><span class="tile-name">Kyber (pre-standard)</span><span class="tile-id">KYBER-LEGACY</span></div><div class="tile"  title="Dilithium (pre-standard) (DILITHIUM-LEGACY) &mdash; not observed in this scan"><span class="tile-name">Dilithium (pre-standard)</span><span class="tile-id">DILITHIUM-LEGACY</span></div></div>
+        </div>
+        <div class="catalog-section">
+          <div class="catalog-section-head">
+            <span class="dot" style="background:#0D9488"></span>
+            <h4>Hybrid classical+PQ</h4>
+            <span class="catalog-section-sub">2/2 seen in this scan</span>
+          </div>
+          <div class="tile-grid"><div class="tile found" style="--tc:#0D9488" title="TLS 1.3 (hybrid PQ key exchange configured) (TLS1.3-HYBRID) &mdash; seen 2x"><span class="tile-name">TLS 1.3 (hybrid PQ key exchange configured)</span><span class="tile-id">TLS1.3-HYBRID</span><span class="tile-count">2</span></div><div class="tile found" style="--tc:#0D9488" title="Hybrid KEM (classical+ML-KEM) (HYBRID-KEM) &mdash; seen 3x"><span class="tile-name">Hybrid KEM (classical+ML-KEM)</span><span class="tile-id">HYBRID-KEM</span><span class="tile-count">3</span></div></div>
+        </div>
+        <div class="catalog-section">
+          <div class="catalog-section-head">
+            <span class="dot" style="background:#16A34A"></span>
+            <h4>Quantum-safe</h4>
+            <span class="catalog-section-sub">4/13 seen in this scan</span>
+          </div>
+          <div class="tile-grid"><div class="tile found" style="--tc:#16A34A" title="AES-256 (AES-256) &mdash; seen 1x"><span class="tile-name">AES-256</span><span class="tile-id">AES-256</span><span class="tile-count">1</span></div><div class="tile found" style="--tc:#16A34A" title="ChaCha20(-Poly1305) (CHACHA20) &mdash; seen 2x"><span class="tile-name">ChaCha20(-Poly1305)</span><span class="tile-id">CHACHA20</span><span class="tile-count">2</span></div><div class="tile found" style="--tc:#16A34A" title="SHA-256 (SHA-256) &mdash; seen 3x"><span class="tile-name">SHA-256</span><span class="tile-id">SHA-256</span><span class="tile-count">3</span></div><div class="tile"  title="SHA-384 (SHA-384) &mdash; not observed in this scan"><span class="tile-name">SHA-384</span><span class="tile-id">SHA-384</span></div><div class="tile"  title="SHA-512 (SHA-512) &mdash; not observed in this scan"><span class="tile-name">SHA-512</span><span class="tile-id">SHA-512</span></div><div class="tile"  title="SHA-3 family (SHA3) &mdash; not observed in this scan"><span class="tile-name">SHA-3 family</span><span class="tile-id">SHA3</span></div><div class="tile"  title="ML-KEM-512 (ML-KEM-512) &mdash; not observed in this scan"><span class="tile-name">ML-KEM-512</span><span class="tile-id">ML-KEM-512</span></div><div class="tile"  title="ML-KEM-768 (ML-KEM-768) &mdash; not observed in this scan"><span class="tile-name">ML-KEM-768</span><span class="tile-id">ML-KEM-768</span></div><div class="tile"  title="ML-KEM-1024 (ML-KEM-1024) &mdash; not observed in this scan"><span class="tile-name">ML-KEM-1024</span><span class="tile-id">ML-KEM-1024</span></div><div class="tile found" style="--tc:#16A34A" title="ML-DSA (44/65/87) (ML-DSA) &mdash; seen 2x"><span class="tile-name">ML-DSA (44/65/87)</span><span class="tile-id">ML-DSA</span><span class="tile-count">2</span></div><div class="tile"  title="SLH-DSA (SPHINCS+) (SLH-DSA) &mdash; not observed in this scan"><span class="tile-name">SLH-DSA (SPHINCS+)</span><span class="tile-id">SLH-DSA</span></div><div class="tile"  title="FN-DSA (Falcon) (FN-DSA) &mdash; not observed in this scan"><span class="tile-name">FN-DSA (Falcon)</span><span class="tile-id">FN-DSA</span></div><div class="tile"  title="Hash-based sigs (LMS/XMSS) (HBS) &mdash; not observed in this scan"><span class="tile-name">Hash-based sigs (LMS/XMSS)</span><span class="tile-id">HBS</span></div></div>
+        </div>
+        <div class="catalog-section">
+          <div class="catalog-section-head">
+            <span class="dot" style="background:#6B7280"></span>
+            <h4>Unclassified</h4>
+            <span class="catalog-section-sub">0/1 seen in this scan</span>
+          </div>
+          <div class="tile-grid"><div class="tile"  title="Unclassified crypto (UNCLASSIFIED) &mdash; not observed in this scan"><span class="tile-name">Unclassified crypto</span><span class="tile-id">UNCLASSIFIED</span></div></div>
+        </div>
+  </section>
+
+  
+      <section class="panel">
+        <h2>5&nbsp;&middot;&nbsp;Zero-trust attestation layer</h2>
+        <p class="panel-desc">Findings never leave this machine. What can cross the trust boundary is a small
+          bundle of Pedersen commitments and a sorted Merkle root, generated with <code>--attest</code>.</p>
+        <div class="metrics-grid">
+          <div class="metric"><div class="metric-val">26</div><div class="metric-label">per-algorithm commitments</div></div>
+          <div class="metric"><div class="metric-val">40</div><div class="metric-label">Merkle leaves (findings)</div></div>
+          <div class="metric"><div class="metric-val">0</div><div class="metric-label">zero/threshold proofs issued</div></div>
+        </div>
+        <div class="mono-box">merkle_root = 725a3c34e015b3efc01e54ac039639d629a16aded6ef1d26878a31ad6d93a8bc</div>
+      </section>
+
+</main>
+<footer>QBOM zero-trust framework &middot; dashboard is a static, offline snapshot of one scan run</footer>
+</body>
+</html>

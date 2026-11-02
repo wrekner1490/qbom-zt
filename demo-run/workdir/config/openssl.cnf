@@ -1,0 +1,6 @@
+[req]
+default_bits = 3072
+[system_default_sect]
+CipherString = HIGH:!aNULL:!eNULL
+Protocol = TLSv1.3
+Groups = X25519:X25519MLKEM768

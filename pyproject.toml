@@ -1,0 +1,36 @@
+[project]
+name = "qbom-zt"
+version = "0.1.0"
+description = "Automated QBOM framework for post-quantum readiness, with a zero-trust disclosure layer"
+requires-python = ">=3.11"
+dependencies = [
+    "cryptography>=42.0",
+    "reportlab>=4.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+qbom = "qbom.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["qbom*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+# samples/vulnerable-app is a deliberately-vulnerable fixture used as scanner
+# test input, not source code -- linting/"fixing" it would defeat its purpose.
+# demo-run/ is generated output (includes a remediated copy of that same
+# fixture), not source, for the same reason.
+extend-exclude = ["samples/vulnerable-app", "demo-run"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"qbom/dashboard.py" = ["E501"]
+"tests/*" = ["E501"]
+

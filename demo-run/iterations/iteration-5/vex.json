@@ -1,0 +1,50 @@
+{
+  "ED25519": {
+    "status": "affected",
+    "label": "Ed25519",
+    "threat_class": "SHOR",
+    "count": 1,
+    "previous_count": 2,
+    "replacement": "ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+  },
+  "AES-UNK": {
+    "status": "affected",
+    "label": "AES (key size unknown)",
+    "threat_class": "GROVER",
+    "count": 2,
+    "previous_count": 2,
+    "replacement": "Verify key size; use AES-256"
+  },
+  "RSA-UNK": {
+    "status": "fixed",
+    "label": "RSA (size unknown)",
+    "threat_class": "SHOR",
+    "count": 0,
+    "previous_count": 1,
+    "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+  },
+  "RSA-2048": {
+    "status": "fixed",
+    "label": "RSA-2048",
+    "threat_class": "SHOR",
+    "count": 0,
+    "previous_count": 1,
+    "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+  },
+  "RSA-3072": {
+    "status": "affected",
+    "label": "RSA-3072",
+    "threat_class": "SHOR",
+    "count": 1,
+    "previous_count": 1,
+    "replacement": "ML-KEM-768 (FIPS 203); in TLS/SSH use hybrid X25519MLKEM768 first / ML-DSA-65 (FIPS 204); SLH-DSA (FIPS 205) for long-lived roots/firmware"
+  },
+  "X25519": {
+    "status": "affected",
+    "label": "X25519",
+    "threat_class": "SHOR",
+    "count": 2,
+    "previous_count": 3,
+    "replacement": "Hybrid X25519MLKEM768 now, ML-KEM-768 later"
+  }
+}
